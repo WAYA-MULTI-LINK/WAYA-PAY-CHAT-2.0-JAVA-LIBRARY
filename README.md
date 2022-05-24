@@ -9,8 +9,8 @@ This JAVA library provides a wrapper to implement WayaPay Payment to your applic
 This library can be implemented into your application by importing it.
 Download wayapaylib.zib file and Extract the .jar file and copy it to your project folder
 Add jar file as a Module to your Java project:
-      On Intellij IDEA: File -> Project Structure -> libraries -> Click + sign then select java -> 
-      select the wayapaylib.jar from the Directories you copy it to-> click ok and apply.
+
+      On Intellij IDEA: File -> Project Structure -> libraries -> Click + sign then select java ->select the wayapaylib.jar from the Directories you copy it to-> click ok and apply
       
       On Netbeans: Project properties -> Libraries -> Compile -> ADD JAR/folder -> Add Jar
       
@@ -26,11 +26,13 @@ JSONObject ss =  paymentTransaction.queryPayment("transId","mode");
  
  #NOTE for test purpose use test as mode and use live for production
 
+
 #SAMPLE TEST INITIALIZE REQUEST
 
     PaymentTransaction paymentTransaction = new PaymentTransaction();
   	ResponseData  response = paymentTransaction.initiatePayment("128.00","Order from Luke Vincent","Luke Vincent","wakexow@mailinator.com",
 		"11948667447","MER_qZaVZ1645265780823HOaZW","WAYAPUBK_TEST_0x3442f06c8fa6454e90c5b1a518758c70","test");
+		
     
 #SAMPLE TEST INITIALIZE RESPONSE
 
@@ -40,7 +42,11 @@ JSONObject ss =  paymentTransaction.queryPayment("transId","mode");
     "authUrl": "https://pay.staging.wayapay.ng/?_tranId=1653395156669782335",
     "status": true
 }
+
+
 #SAMPLE TEST VERIFY REQUEST
+
+
         JSONObject ss =  paymentTransaction.queryPayment("1653341407543518988","test");
  
  
