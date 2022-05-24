@@ -7,7 +7,7 @@ This JAVA library provides a wrapper to implement WayaPay Payment to your applic
 
 #Usage
 This library can be implemented into your application by importing it.
-Download wayapaylib.zip from https://github.com/WAYA-MULTI-LINK/WAYA-PAY-CHAT-2.0-JAVA-LIBRARY/raw/Faymos-patch-1/wayapaylib.zip file and Extract the .jar file and copy it to your project folder
+Download wayapaylib.zip from https://github.com/WAYA-MULTI-LINK/WAYA-PAY-CHAT-2.0-JAVA-LIBRARY/raw/Faymos-patch-1/wayapaylib.zip  and Extract the .jar file and copy it to your project folder
 
 Add jar file as a Module to your Java project:
 
