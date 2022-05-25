@@ -5,7 +5,7 @@ This is a JAVA library for implementing WayaPay payment gateway
 #Getting Started
 This JAVA library provides a wrapper to implement WayaPay Payment to your application for Both Maven and gradle 
 
-#Impoting to your project
+#IMPORTING LIBRARY TO YOUR PROJECT
 
 #MAVEN PROJECT
 
@@ -23,7 +23,9 @@ Add jar file as a Module to your Java project:
 #GRADLE PROJECT
 
 This library can be implemented into your application by importing it.
+
 #Option 1
+
 1. Download wayapaylib.zip from https://github.com/WAYA-MULTI-LINK/WAYA-PAY-CHAT-2.0-JAVA-LIBRARY/raw/Faymos-patch-1/wayapaylib.zip  and Extract the wayapaylib.jar file
 2. create a folder name libs in your project module
 3. copy the wayapaylib.jar file you extracted to the libs folder you created
@@ -43,11 +45,15 @@ please only use either of the option, dont use both. option 1 will add all libra
 #For Initialize payment Method
 
  PaymentTransaction paymentTransaction = new PaymentTransaction();
- ResponseData ss = tt.initiatePayment("amount","description","name","email","phoneNumber","merchantId","wayaPublicKey","mode");
+ 
+ ResponseData ss = paymentTransaction.initiatePayment("amount","description","name","email","phoneNumber","merchantId","wayaPublicKey","mode");
+ 
  this method returned status of the intialize payment, transid and Authorization URL(authurl) which you will redirect your user to for payment.
 
 #For Query/Verify payment Method
+
 PaymentTransaction paymentTransaction = new PaymentTransaction();
+
 JSONObject ss =  paymentTransaction.queryPayment("transId","mode");
  
  #NOTE for test purpose use test as mode and use live for production
