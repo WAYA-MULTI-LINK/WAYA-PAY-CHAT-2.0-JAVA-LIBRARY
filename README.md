@@ -3,9 +3,11 @@
 This is a JAVA library for implementing WayaPay payment gateway
 
 #Getting Started
-This JAVA library provides a wrapper to implement WayaPay Payment to your application
+This JAVA library provides a wrapper to implement WayaPay Payment to your application for Both Maven and gradle 
 
-#Usage
+#Impoting to your project
+
+#MAVEN PROJECT
 
 This library can be implemented into your application by importing it.
 
@@ -17,6 +19,27 @@ Add jar file as a Module to your Java project:
       
       On Netbeans: Project properties -> Libraries -> Compile -> ADD JAR/folder -> Add Jar
       
+
+#GRADLE PROJECT
+
+This library can be implemented into your application by importing it.
+#Option 1
+1. Download wayapaylib.zip from https://github.com/WAYA-MULTI-LINK/WAYA-PAY-CHAT-2.0-JAVA-LIBRARY/raw/Faymos-patch-1/wayapaylib.zip  and Extract the wayapaylib.jar file
+2. create a folder name libs in your project module
+3. copy the wayapaylib.jar file you extracted to the libs folder you created
+4. add  implementation fileTree(include: ['*.jar'], dir: 'libs') to your build.gradle dependencies (note: only add that line once, if already in your project, dont add it)
+5. reload your build.gradle
+
+#Option 2
+1. Download wayapaylib.zip from https://github.com/WAYA-MULTI-LINK/WAYA-PAY-CHAT-2.0-JAVA-LIBRARY/raw/Faymos-patch-1/wayapaylib.zip  and Extract the wayapaylib.jar file
+2. create a folder name libs in your project module
+3. copy the wayapaylib.jar file you extracted to the libs folder you created
+4. Add  implementation files('libs/wayapaylib.jar')
+
+please only use either of the option, dont use both. option 1 will add all libraries in your libs folder while option 2 will only add the specific library
+
+#USAGE
+
 #For Initialize payment Method
 
  PaymentTransaction paymentTransaction = new PaymentTransaction();
