@@ -29,7 +29,7 @@ This library can be implemented into your application by importing it.
 1. Download wayapaylib.zip from https://github.com/WAYA-MULTI-LINK/WAYA-PAY-CHAT-2.0-JAVA-LIBRARY/raw/Faymos-patch-1/wayapaylib.zip  and Extract the wayapaylib.jar file
 2. create a folder name libs in your project module
 3. copy the wayapaylib.jar file you extracted to the libs folder you created
-4. add  implementation fileTree(include: ['*.jar'], dir: 'libs') to your build.gradle dependencies (note: only add that line once, if already in your project, dont add it)
+4. add  implementation fileTree(include: ['*.jar'], dir: 'libs') to your build.gradle dependencies (note: only add that line once, if already in your project, don't add it again)
 5. reload your build.gradle
 
 #Option 2
