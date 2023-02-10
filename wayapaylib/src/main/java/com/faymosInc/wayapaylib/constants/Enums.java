@@ -1,7 +1,7 @@
 package com.faymosInc.wayapaylib.constants;
 
 public class Enums {
-    private final static String BASE_URL = "https://services.wayaquick.com";
+    private final static String BASE_URL = "https://services.wayapay.ng";
 
     public static final String testUrlPayment = BASE_URL + "/payment-gateway/api/v1/request/transaction";
     public static final String liveUrlPayment = BASE_URL + "";
