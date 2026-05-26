@@ -29,7 +29,7 @@ Built with Java and Spring Boot compatible components.
 
 ```xml
 <dependency>
-    <groupId>ng.wayapay</groupId>
+    <groupId>io.github.semzytheman</groupId>
     <artifactId>wayapay-java-sdk</artifactId>
     <version>1.0.0</version>
 </dependency>
