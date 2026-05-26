@@ -1,5 +1,6 @@
 package com.faymosInc.wayapaylib.dto;
 
+
 import lombok.Data;
 
 @Data
