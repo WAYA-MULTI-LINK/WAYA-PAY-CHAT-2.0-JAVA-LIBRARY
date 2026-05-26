@@ -12,5 +12,4 @@
 /Users/mustaphasemilore/Desktop/WAYA-PAY-CHAT-2.0-JAVA-LIBRARY/wayapaylib/src/main/java/com/faymosInc/wayapaylib/dto/InitiatePayoutRequest.java
 /Users/mustaphasemilore/Desktop/WAYA-PAY-CHAT-2.0-JAVA-LIBRARY/wayapaylib/src/main/java/com/faymosInc/wayapaylib/dto/PaymentMetadata.java
 /Users/mustaphasemilore/Desktop/WAYA-PAY-CHAT-2.0-JAVA-LIBRARY/wayapaylib/src/main/java/com/faymosInc/wayapaylib/dto/VerifyAccountRequest.java
-/Users/mustaphasemilore/Desktop/WAYA-PAY-CHAT-2.0-JAVA-LIBRARY/wayapaylib/src/main/java/com/faymosInc/wayapaylib/services/Connections.java
 /Users/mustaphasemilore/Desktop/WAYA-PAY-CHAT-2.0-JAVA-LIBRARY/wayapaylib/src/main/java/com/faymosInc/wayapaylib/services/WayaPayClient.java
