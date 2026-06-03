@@ -7,4 +7,5 @@ public class VerifyAccountRequest {
 
     private String accountNumber;
     private String bankCode;
+    private String enquiryType;
 }

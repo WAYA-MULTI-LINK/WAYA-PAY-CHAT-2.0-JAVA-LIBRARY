@@ -6,18 +6,18 @@ import lombok.Getter;
 public class WayaPayConfig {
 
     private final String merchantId;
-    private final String publicKey;
+    private final String secretKey;
     private final String baseUrl;
     private final String paymentLink;
 
-    public WayaPayConfig(String merchantId, String publicKey, String environment) {
+    public WayaPayConfig(String merchantId, String secretKey, String environment) {
 
         if (merchantId == null || merchantId.isBlank()) {
             throw new IllegalArgumentException("merchantId is required");
         }
 
-        if (publicKey == null || publicKey.isBlank()) {
-            throw new IllegalArgumentException("publicKey is required");
+        if (secretKey == null || secretKey.isBlank()) {
+            throw new IllegalArgumentException("secretKey is required");
         }
 
         if (environment == null || environment.isBlank()) {
@@ -28,7 +28,7 @@ public class WayaPayConfig {
                 || environment.trim().equalsIgnoreCase("prod");
 
         this.merchantId = merchantId;
-        this.publicKey = publicKey;
+        this.secretKey = secretKey;
 
         this.baseUrl = isProd
                 ? "https://services.wayapay.ng"
