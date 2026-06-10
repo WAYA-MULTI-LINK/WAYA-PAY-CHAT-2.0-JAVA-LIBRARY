@@ -3,33 +3,38 @@
 Pre-built JARs for the WayaPay Java SDK, committed to the repo so they ship via GitHub.
 Use this to consume the library without publishing to Maven Central.
 
-Files in this folder:
+Each release lives in its own `version<x.y.z>/` folder. The current release is
+[`version2.0.0/`](version2.0.0/):
 
 | File | What it is |
 |------|------------|
+| `wayapay-java-sdk-2.0.0.zip` | **Download this.** Bundles the three files below. |
 | `wayapay-java-sdk-2.0.0.jar` | The compiled library — put this on your classpath. |
 | `wayapay-java-sdk-2.0.0-sources.jar` | Sources, for IDE navigation and Javadoc. |
 | `wayapay-java-sdk-2.0.0.pom` | The POM, so the one runtime dependency (Jackson) resolves transitively. |
 
-## Rebuild the JARs
+## Rebuild the artifact
 
-From the repo root:
+From the repo root (the `VERSION` matches `<version>` in `pom.xml`):
 
 ```bash
+VERSION=2.0.0
 mvn -q clean package
-cp target/wayapay-java-sdk-*.jar artifact/
-cp pom.xml artifact/wayapay-java-sdk-2.0.0.pom
-# version comes from <version> in pom.xml
+mkdir -p artifact/version$VERSION
+cp target/wayapay-java-sdk-$VERSION.jar target/wayapay-java-sdk-$VERSION-sources.jar artifact/version$VERSION/
+cp pom.xml artifact/version$VERSION/wayapay-java-sdk-$VERSION.pom
+(cd artifact/version$VERSION && zip -q wayapay-java-sdk-$VERSION.zip wayapay-java-sdk-$VERSION.jar wayapay-java-sdk-$VERSION-sources.jar wayapay-java-sdk-$VERSION.pom)
 ```
 
 ## Consume it
 
-### Option 1 — Download from GitHub, install into your local Maven repo (recommended)
+### Option 1 — Download the zip, install into your local Maven repo (recommended)
 
-Download `wayapay-java-sdk-2.0.0.jar` and `wayapay-java-sdk-2.0.0.pom` (open the file on GitHub and
-click **Download raw file**, or `curl` the raw URL), then:
+Download `version2.0.0/wayapay-java-sdk-2.0.0.zip` (open it on GitHub → **Download raw file**, or
+`curl` the raw URL), unzip it, then from the unzipped folder:
 
 ```bash
+unzip wayapay-java-sdk-2.0.0.zip
 mvn install:install-file \
   -Dfile=wayapay-java-sdk-2.0.0.jar \
   -DpomFile=wayapay-java-sdk-2.0.0.pom \
