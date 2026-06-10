@@ -22,7 +22,7 @@ buildNumber.properties
 !mvnw.cmd
 # ...and DO publish the distributable JARs in artifact/ so they ship with the repo.
 !artifact/
-!artifact/*.jar
+!artifact/**/*.jar
 
 # Logs
 *.log

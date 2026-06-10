@@ -7,27 +7,32 @@ Targets **Java 17+**. One runtime dependency (Jackson for JSON); the HTTP layer 
 ## Install
 
 The library isn't on Maven Central yet. A pre-built JAR ships with the repo under
-[`artifact/`](artifact/README.md), so you install it from GitHub in two steps: **download the files**,
-then **register them with Maven**.
+[`artifact/version2.0.0/`](artifact/README.md), bundled as a single **zip** for easy download. You
+install it from GitHub in three steps: **download the zip**, **unzip it**, then **register it with Maven**.
 
-### Step 1 — Download the JAR from GitHub
+### Step 1 — Download the zip from GitHub
 
-Either grab the files from the repo's [`artifact/`](https://github.com/WAYA-MULTI-LINK/WAYA-PAY-CHAT-2.0-JAVA-LIBRARY/tree/main/artifact)
-folder in your browser (open each file → **Download raw file**), or `curl` the raw URLs:
+Open the zip on GitHub and click **Download raw file**, or `curl` the raw URL:
 
 ```bash
-BASE=https://github.com/WAYA-MULTI-LINK/WAYA-PAY-CHAT-2.0-JAVA-LIBRARY/raw/main/artifact
-curl -L -O "$BASE/wayapay-java-sdk-2.0.0.jar"
-curl -L -O "$BASE/wayapay-java-sdk-2.0.0.pom"
-curl -L -O "$BASE/wayapay-java-sdk-2.0.0-sources.jar"   # optional: IDE sources
+curl -L -O https://github.com/WAYA-MULTI-LINK/WAYA-PAY-CHAT-2.0-JAVA-LIBRARY/raw/main/artifact/version2.0.0/wayapay-java-sdk-2.0.0.zip
 ```
 
-> Tip: cloning the repo (`git clone …`) downloads the same files into `artifact/` — skip the `curl`
-> commands and `cd` into that folder instead.
+The zip contains the library JAR, the sources JAR, and the POM.
 
-### Step 2 — Install it into your local Maven repo
+> Tip: cloning the repo (`git clone …`) gives you the same files under
+> `artifact/version2.0.0/` — skip the download and `cd` into that folder instead.
 
-From the folder where you saved the files, run:
+### Step 2 — Unzip it
+
+```bash
+unzip wayapay-java-sdk-2.0.0.zip
+# -> wayapay-java-sdk-2.0.0.jar, wayapay-java-sdk-2.0.0-sources.jar, wayapay-java-sdk-2.0.0.pom
+```
+
+### Step 3 — Install it into your local Maven repo
+
+From the folder where you unzipped the files, run:
 
 ```bash
 mvn install:install-file \
@@ -39,7 +44,7 @@ mvn install:install-file \
 This places the SDK in `~/.m2/repository/com/waya/wayapay-java-sdk/2.0.0/`. The `-DpomFile` flag is
 what makes Jackson resolve transitively — without it you'd have to add Jackson by hand.
 
-### Step 3 — Declare the dependency
+### Step 4 — Declare the dependency
 
 In your project's `pom.xml`:
 
@@ -58,7 +63,7 @@ set `<maven.compiler.release>17</maven.compiler.release>` (or higher) in your pr
 
 ### Gradle setup
 
-After Steps 1–2 above (the SDK now lives in your local Maven repo, `~/.m2`), add `mavenLocal()` as a
+After Steps 1–3 above (the SDK now lives in your local Maven repo, `~/.m2`), add `mavenLocal()` as a
 repository and declare the dependency. `mavenLocal()` reads the POM, so Jackson resolves transitively.
 
 ```groovy
