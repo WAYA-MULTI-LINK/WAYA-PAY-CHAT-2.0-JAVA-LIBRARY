@@ -6,9 +6,28 @@ Targets **Java 17+**. One runtime dependency (Jackson for JSON); the HTTP layer 
 
 ## Install
 
-The library isn't on Maven Central yet, so a pre-built JAR is committed to the repo under
-[`artifact/`](artifact/README.md). The quickest path: download `wayapay-java-sdk-2.0.0.jar` and
-`wayapay-java-sdk-2.0.0.pom` from that folder and install them into your local Maven repo —
+The library isn't on Maven Central yet. A pre-built JAR ships with the repo under
+[`artifact/`](artifact/README.md), so you install it from GitHub in two steps: **download the files**,
+then **register them with Maven**.
+
+### Step 1 — Download the JAR from GitHub
+
+Either grab the files from the repo's [`artifact/`](https://github.com/WAYA-MULTI-LINK/WAYA-PAY-CHAT-2.0-JAVA-LIBRARY/tree/main/artifact)
+folder in your browser (open each file → **Download raw file**), or `curl` the raw URLs:
+
+```bash
+BASE=https://github.com/WAYA-MULTI-LINK/WAYA-PAY-CHAT-2.0-JAVA-LIBRARY/raw/main/artifact
+curl -L -O "$BASE/wayapay-java-sdk-2.0.0.jar"
+curl -L -O "$BASE/wayapay-java-sdk-2.0.0.pom"
+curl -L -O "$BASE/wayapay-java-sdk-2.0.0-sources.jar"   # optional: IDE sources
+```
+
+> Tip: cloning the repo (`git clone …`) downloads the same files into `artifact/` — skip the `curl`
+> commands and `cd` into that folder instead.
+
+### Step 2 — Install it into your local Maven repo
+
+From the folder where you saved the files, run:
 
 ```bash
 mvn install:install-file \
@@ -17,18 +36,88 @@ mvn install:install-file \
   -Dsources=wayapay-java-sdk-2.0.0-sources.jar
 ```
 
-— then declare the dependency (Jackson resolves transitively from the POM):
+This places the SDK in `~/.m2/repository/com/waya/wayapay-java-sdk/2.0.0/`. The `-DpomFile` flag is
+what makes Jackson resolve transitively — without it you'd have to add Jackson by hand.
+
+### Step 3 — Declare the dependency
+
+In your project's `pom.xml`:
 
 ```xml
-<dependency>
-    <groupId>com.waya</groupId>
-    <artifactId>wayapay-java-sdk</artifactId>
-    <version>2.0.0</version>
-</dependency>
+<dependencies>
+    <dependency>
+        <groupId>com.waya</groupId>
+        <artifactId>wayapay-java-sdk</artifactId>
+        <version>2.0.0</version>
+    </dependency>
+</dependencies>
 ```
 
-Building from source instead? `mvn clean install` produces `target/wayapay-java-sdk-2.0.0.jar`.
-See [`artifact/README.md`](artifact/README.md) for system-scope, Gradle, and plain-classpath options.
+That's it — `mvn compile` now resolves the SDK (and Jackson) from your local repo. Requires **Java 17+**;
+set `<maven.compiler.release>17</maven.compiler.release>` (or higher) in your project's properties.
+
+### Gradle setup
+
+After Steps 1–2 above (the SDK now lives in your local Maven repo, `~/.m2`), add `mavenLocal()` as a
+repository and declare the dependency. `mavenLocal()` reads the POM, so Jackson resolves transitively.
+
+```groovy
+// build.gradle (Groovy DSL)
+repositories {
+    mavenLocal()    // resolves the SDK you installed in Step 2
+    mavenCentral()  // resolves Jackson (pulled in transitively)
+}
+
+dependencies {
+    implementation 'com.waya:wayapay-java-sdk:2.0.0'
+}
+
+java {
+    toolchain { languageVersion = JavaLanguageVersion.of(17) }
+}
+```
+
+```kotlin
+// build.gradle.kts (Kotlin DSL)
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    implementation("com.waya:wayapay-java-sdk:2.0.0")
+}
+
+java {
+    toolchain { languageVersion = JavaLanguageVersion.of(17) }
+}
+```
+
+Prefer not to install into `~/.m2`? Drop the downloaded `wayapay-java-sdk-2.0.0.jar` into a `libs/`
+folder and use a flat-dir repository instead (you must then add Jackson yourself):
+
+```groovy
+repositories {
+    flatDir { dirs 'libs' }
+    mavenCentral()
+}
+
+dependencies {
+    implementation name: 'wayapay-java-sdk-2.0.0'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.1'
+}
+```
+
+### Building from source instead
+
+```bash
+git clone https://github.com/WAYA-MULTI-LINK/WAYA-PAY-CHAT-2.0-JAVA-LIBRARY.git
+cd WAYA-PAY-CHAT-2.0-JAVA-LIBRARY
+mvn clean install   # builds, tests, and installs to ~/.m2 — artifact: target/wayapay-java-sdk-2.0.0.jar
+```
+
+Not using Maven? See [`artifact/README.md`](artifact/README.md) for Maven `system`-scope, Gradle
+flat-dir, and plain-classpath setups.
 
 ## Quickstart
 
