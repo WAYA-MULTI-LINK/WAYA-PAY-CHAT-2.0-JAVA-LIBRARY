@@ -16,6 +16,10 @@
         <module name="wayapaylibgraddle.main" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="wayapay-java-sdk" target="17" />
+      <module name="wayapaylibgraddle" target="11" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">

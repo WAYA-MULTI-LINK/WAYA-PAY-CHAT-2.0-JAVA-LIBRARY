@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html","k":"18"},{"l":"com.faymosInc.wayapaylib"},{"l":"com.faymosInc.wayapaylib.config"},{"l":"com.faymosInc.wayapaylib.constants"},{"l":"com.faymosInc.wayapaylib.dto"},{"l":"com.faymosInc.wayapaylib.services"}];updateSearchResults();

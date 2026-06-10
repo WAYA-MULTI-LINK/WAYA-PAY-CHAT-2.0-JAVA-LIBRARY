@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.waya</groupId>
+	<artifactId>wayapay-java-sdk</artifactId>
+	<version>2.0.0</version>
+	<packaging>jar</packaging>
+
+	<name>WayaPay Java SDK</name>
+	<description>Official Java SDK for the WayaPay payment gateway</description>
+	<url>https://github.com/WAYA-MULTI-LINK/WAYA-PAY-CHAT-2.0-JAVA-LIBRARY</url>
+
+	<licenses>
+		<license>
+			<name>MIT License</name>
+			<url>https://opensource.org/licenses/MIT</url>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<id>WayaPayChat</id>
+			<name>WayaQuick Admin</name>
+			<email>samuel.muoto@wayapaychat.com</email>
+		</developer>
+	</developers>
+
+	<scm>
+		<connection>scm:git:git://github.com/WAYA-MULTI-LINK/WAYA-PAY-CHAT-2.0-JAVA-LIBRARY.git</connection>
+		<developerConnection>scm:git:ssh://github.com:WAYA-MULTI-LINK/WAYA-PAY-CHAT-2.0-JAVA-LIBRARY.git</developerConnection>
+		<url>https://github.com/WAYA-MULTI-LINK/WAYA-PAY-CHAT-2.0-JAVA-LIBRARY/tree/main</url>
+	</scm>
+
+	<properties>
+		<java.version>17</java.version>
+		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<jackson.version>2.17.1</jackson.version>
+	</properties>
+
+	<dependencies>
+		<!-- JSON serialization. The only runtime dependency; the HTTP layer is the JDK's built-in java.net.http. -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<version>5.10.2</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.2.5</version>
+			</plugin>
+
+			<!-- Publishes a sources JAR alongside the main JAR (good library hygiene) -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>3.3.0</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals><goal>jar</goal></goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Lets you run the bundled demo: mvn exec:java -Dexec.mainClass=com.waya.wayapay.examples.Demo -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>3.1.0</version>
+			</plugin>
+		</plugins>
+	</build>
+</project>

@@ -1,385 +1,286 @@
-# Getting Started
-
-### Reference Documentation
-For further reference, please consider the following sections:
-
-* [Official Apache Maven documentation](https://maven.apache.org/guides/index.html)
-* [Spring Boot Maven Plugin Reference Guide](https://docs.spring.io/spring-boot/docs/2.7.0/maven-plugin/reference/html/)
-* [Create an OCI image](https://docs.spring.io/spring-boot/docs/2.7.0/maven-plugin/reference/html/#build-image)
-
 # WayaPay Java SDK
 
-Official Java SDK for integrating with WayaPay payment APIs.
+Java client for the **WayaQuick Merchant API v2**. Collect payments, send payouts, verify bank accounts, and run BVN identity checks in Nigeria.
 
-The SDK provides support for:
+Targets **Java 17+**. One runtime dependency (Jackson for JSON); the HTTP layer is the JDK's built-in `java.net.http`. **Server-side only** — your secret key must never leave your server.
 
-- Payment Collection
-- Payouts
-- Transaction Verification
-- Bank Listing
-- Account Verification
+## Install
 
-Built with Java and Spring Boot compatible components.
+The library isn't on Maven Central yet, so a pre-built JAR is committed to the repo under
+[`artifact/`](artifact/README.md). The quickest path: download `wayapay-java-sdk-2.0.0.jar` and
+`wayapay-java-sdk-2.0.0.pom` from that folder and install them into your local Maven repo —
 
----
+```bash
+mvn install:install-file \
+  -Dfile=wayapay-java-sdk-2.0.0.jar \
+  -DpomFile=wayapay-java-sdk-2.0.0.pom \
+  -Dsources=wayapay-java-sdk-2.0.0-sources.jar
+```
 
-# Installation
-
-## Maven
+— then declare the dependency (Jackson resolves transitively from the POM):
 
 ```xml
 <dependency>
-    <groupId>io.github.semzytheman</groupId>
+    <groupId>com.waya</groupId>
     <artifactId>wayapay-java-sdk</artifactId>
-    <version>1.0.0</version>
+    <version>2.0.0</version>
 </dependency>
 ```
 
----
+Building from source instead? `mvn clean install` produces `target/wayapay-java-sdk-2.0.0.jar`.
+See [`artifact/README.md`](artifact/README.md) for system-scope, Gradle, and plain-classpath options.
 
-# Requirements
-
-- Java 17+
-- Maven or Gradle
-- Spring Boot 3+ (recommended)
-
----
-
-# Recommended Project Structure
-
-```text
-src/main/java/com/wayapay/sdk/
-├── WayaPayClient.java
-├── WayaPayConfig.java
-├── dto/
-│   ├── InitializePaymentRequest.java
-│   ├── InitiatePayoutRequest.java
-│   ├── PaymentMetadata.java
-│   └── VerifyAccountRequest.java
-└── config/
-    └── RestTemplateConfig.java
-```
-
----
-
-# Initialization
+## Quickstart
 
 ```java
-import com.wayapay.sdk.WayaPayClient;
-import com.wayapay.sdk.WayaPayConfig;
+import com.waya.wayapay.WayaPayClient;
 
-import org.springframework.web.client.RestTemplate;
-
-RestTemplate restTemplate = new RestTemplate();
-
-WayaPayConfig config = new WayaPayConfig(
-        "your-merchant-id",
-        "your-public-key",
-        "development"
-);
-
+// Shorthand — default base URL and settings:
 WayaPayClient client = new WayaPayClient(
-        restTemplate,
-        config
-);
+        "MER_...",            // merchant ID, from the dashboard
+        "WAYASECK_TEST_...");  // swap for WAYASECK_... on live
+
+// Or with full options:
+WayaPayClient client = new WayaPayClient(WayaPayOptions.builder()
+        .merchantId("MER_...")
+        .secretKey("WAYASECK_TEST_...")
+        .webhookSecret("...")   // optional: enables client.webhooks() without passing a secret
+        .timeoutMs(30_000)      // default: 30s
+        .maxRetries(2)          // default: 2 — GET only, exponential backoff
+        .build());
 ```
 
----
+The client is thread-safe — build one and share it.
 
-# Environment Values
+## API at a glance
 
-| Environment | Description |
-|---|---|
-| development | Sandbox / staging |
-| test | Sandbox / staging |
-| production | Live production |
-| prod | Live production |
+| Call | Returns |
+|------|---------|
+| `client.payouts().listBanks()` | `List<Bank>` |
+| `client.payouts().verifyAccount(…)` | `VerifyAccountResponse` |
+| `client.payouts().initiate(…)` | `PayoutResponse` |
+| `client.payouts().getStatus(reference)` | `PayoutStatusResponse` |
+| `client.collection().initiate(…)` | `CollectionResponse` |
+| `client.collection().getStatus(refNo)` | `CollectionStatusResponse` |
+| `client.identity().verifyBvn(…)` | `BvnResponse` |
+| `client.webhooks().constructEvent(…)` | `WebhookEvent` |
+| `client.webhooks().verifySignature(…)` | `boolean` |
+| `WayaPayClient.generateReference(prefix)` | `String` |
 
----
+Every API call returns the unwrapped payload directly and throws `WayaPayException` on failure.
 
-# Initialize Payment
-
-Initialize a payment collection request.
-
-## Example
+## List banks
 
 ```java
-import com.wayapay.sdk.dto.InitializePaymentRequest;
-import com.wayapay.sdk.dto.PaymentMetadata;
-
-import java.math.BigDecimal;
-import java.util.UUID;
-
-PaymentMetadata metadata = new PaymentMetadata();
-
-metadata.setFirstName("John");
-metadata.setLastName("Doe");
-metadata.setPhoneNumber("08012345678");
-metadata.setEmailAddress("john@example.com");
-metadata.setCancelUrl("https://yourapp.com/payment/cancel");
-
-InitializePaymentRequest request =
-        new InitializePaymentRequest();
-
-request.setCurrency("NGN");
-request.setAmount(new BigDecimal("5000"));
-request.setCallBackUrl("https://yourapp.com/payment/callback");
-request.setIdempotencyKey(UUID.randomUUID().toString());
-request.setPaymentRef("PAY-" + System.currentTimeMillis());
-request.setMetadata(metadata);
-
-Object response = client.initializePayment(request);
-
-System.out.println(response);
+List<Bank> banks = client.payouts().listBanks();
+// each entry has .code(), .name(), .id(), .status()
 ```
 
----
+## Verify an account
 
-# Request Parameters
-
-| Field | Type | Required | Description |
-|---|---|---|---|
-| currency | String | Yes | ISO currency code |
-| amount | BigDecimal | Yes | Amount to collect |
-| callBackUrl | String | Yes | Redirect URL after payment |
-| idempotencyKey | String | Yes | Prevent duplicate transactions |
-| paymentRef | String | Yes | Unique merchant payment reference |
-| metadata | Object | Yes | Customer information |
-
-## Metadata Parameters
-
-| Field | Type | Required |
-|---|---|---|
-| firstName | String | Yes |
-| lastName | String | Yes |
-| phoneNumber | String | Yes |
-| emailAddress | String | Yes |
-| cancelUrl | String | No |
-
----
-
-# Initiate Payout
-
-Send funds to a customer bank account.
-
-## Example
+Always verify before sending a payout — confirms the account exists and returns the registered name.
 
 ```java
-import com.wayapay.sdk.dto.InitiatePayoutRequest;
-
-import java.math.BigDecimal;
-import java.util.UUID;
-
-InitiatePayoutRequest request =
-        new InitiatePayoutRequest();
-
-request.setCurrency("NGN");
-request.setAmount(new BigDecimal("1000"));
-request.setIdempotencyKey(UUID.randomUUID().toString());
-request.setBankCode("058");
-request.setAccountNumber("0123456789");
-
-Object response = client.initiatePayout(request);
-
-System.out.println(response);
+VerifyAccountResponse account = client.payouts()
+        .verifyAccount(VerifyAccountRequest.others("0123456789", "044"));
+//      ... or .wayaBank("0123456789") for an intra-bank ("WAYA-BANK") enquiry
+System.out.println(account.accountName()); // "JOHN DOE"
 ```
 
----
+**Returns** `VerifyAccountResponse` — `.successful()`, `.accountNumber()`, `.accountName()`, `.bankCode()`, `.bankName()`, `.responseCode()`, `.responseMessage()`, `.enquiryType()`.
 
-# Verify Transaction
-
-Verify the status of a payment or payout transaction.
-
-## Example
+## Initiate a payout
 
 ```java
-Object response =
-        client.verifyTransaction("TRX-123456789");
-
-System.out.println(response);
+PayoutResponse payout = client.payouts().initiate(PayoutRequest.builder()
+        .amount("5000.00")
+        .currency("NGN")
+        .accountNumber("0123456789")
+        .bankCode("044")
+        .accountName(account.accountName())
+        .reference(WayaPayClient.generateReference("PAYOUT"))
+        .narration("April salary")
+        .build());
+// payout.status() == "PROCESSING" means accepted, not yet settled
 ```
 
----
+**Returns** `PayoutResponse` — `.payoutReference()`, `.merchantReference()`, `.status()`, `.message()`.
 
-# Fetch Bank List
+`generateReference` produces a timestamped, collision-resistant key (`PAYOUT-1748160000000-A1B2C3D4`). Generate a fresh one per operation and reuse the same one on retries.
 
-Retrieve supported banks and bank codes.
+## Check payout status
 
-## Example
+Reconcile a payout by the reference you sent at initiation.
 
 ```java
-Object response = client.fetchBankList();
+PayoutStatusResponse payout = client.payouts().getStatus("PAYOUT-20260604-001");
 
-System.out.println(response);
-```
-
----
-
-# Verify Account
-
-Verify a customer bank account before payout.
-
-## Example
-
-```java
-import com.wayapay.sdk.dto.VerifyAccountRequest;
-
-VerifyAccountRequest request =
-        new VerifyAccountRequest();
-
-request.setAccountNumber("0123456789");
-request.setBankCode("058");
-
-Object response = client.verifyAccount(request);
-
-System.out.println(response);
-```
-
----
-
-# Successful Response Format
-
-```json
-{
-  "status": true,
-  "data": {
-    "reference": "PAY-123456",
-    "authorizationUrl": "https://checkout.url"
-  }
+switch (payout.parsedStatus().outcome()) {
+    case SUCCEEDED   -> { /* funds delivered */ }
+    case REVERSED    -> { /* failed — wallet re-credited */ }
+    case RECONCILING -> { /* PENDING — check again later */ }
 }
 ```
 
----
+**Returns** `PayoutStatusResponse` — `.transactionReference()`, `.status()`, `.amount()`, `.destinationAccountNumber()`, `.destinationAccountName()`, `.destinationBankName()`, `.narration()`, `.createdAt()`. Parse `.status()` with `.parsedStatus()` → `PayoutStatus`.
 
-# Error Response Format
+| `status` | Terminal | Meaning |
+|------------|----------|---------|
+| `PENDING`  | no  | Submitted; terminal outcome not yet recorded (reconciling). |
+| `SUCCESS`  | yes | Completed successfully. |
+| `REVERSED` | yes | Failed/reversed — the merchant wallet was re-credited. |
 
-```json
-{
-  "status": false,
-  "message": "currency is required"
+## Collect a payment
+
+```java
+CollectionResponse collection = client.collection().initiate(CollectionRequest.builder()
+        .amount("1500.00")
+        .currency("NGN")
+        .email("customer@example.com")
+        .transactionId(WayaPayClient.generateReference("TXN"))
+        .firstName("John")
+        .lastName("Doe")
+        .phone("08012345678")
+        .description("Order #1234")
+        .build());
+// Redirect the customer to collection.checkOutUrl() to complete payment.
+```
+
+**Returns** `CollectionResponse` — `.uniqueId()`, `.transactionId()`, `.checkOutUrl()`, `.amount()`, `.email()`, `.merchantId()`.
+
+## Check collection (deposit) status
+
+The deposit webhook is the primary signal; this endpoint is the pull/safety-net path for reconciliation. Look it up by `refNo` (the gateway `transactionId` / webhook `OrderId`).
+
+```java
+CollectionStatusResponse deposit = client.collection().getStatus("1779662251460508970");
+
+if (deposit.parsedStatus() == CollectionStatus.SUCCESSFUL) {
+    // Funds confirmed — fulfil. Use deposit.refNo() as the idempotency key.
+} else if (!deposit.parsedStatus().isTerminal()) {
+    // Still in flight — keep polling; don't refund or retry.
 }
 ```
 
----
+**Returns** `CollectionStatusResponse` — `.refNo()`, `.tranId()`, `.merchantId()`, `.amount()`, `.amountPaid()`, `.fee()`, `.currencyCode()`, `.status()`, `.settlementStatus()`, `.channel()`, `.processedBy()`, `.customerEmail()`, `.description()`, `.environment()`, `.tranDate()`. Parse `.status()` with `.parsedStatus()` → `CollectionStatus`.
 
-# Spring Boot Configuration
+`amount()` is the expected amount; `amountPaid()` is what was actually received — it can be smaller (`PARTIAL` underpayment) or larger (overpayment). Use `status` + `amountPaid` as authoritative.
 
-## RestTemplate Bean
+| `status` | Terminal | Outcome | Meaning |
+|----------|----------|---------|---------|
+| `INITIATED` / `PENDING` / `PROCESSING` / `APPROVED` | no | `IN_FLIGHT` | In flight — keep polling; don't refund or retry. |
+| `PARTIAL` | no | `IN_FLIGHT` | Customer underpaid into a virtual account. |
+| `SUCCESSFUL` | yes | `SUCCEEDED` | Funds confirmed — fulfil (use `refNo` for idempotency). |
+| `REFUNDED` | yes | `REFUNDED` | Previously-successful transaction refunded. |
+| `FAILED` / `DECLINED` / `REJECTED` / `ABANDONED` / `EXPIRED` / `CANCELLED` / `CUSTOMER_ERROR` / `FRAUD_ERROR` | yes | `NOT_DEBITED` | Customer not debited — no fulfilment. |
+| `TIMEOUT` / `ERROR` / `SYSTEM_ERROR` / `BANK_ERROR` | yes | `INDETERMINATE` | Outcome unknown — reconcile, don't refund unilaterally. |
+
+A reference that doesn't belong to the authenticated merchant returns `404` (surfaced as `WayaPayException` with `statusCode() == 404`).
+
+## Process webhooks
+
+WayaPay POSTs your server whenever a transaction becomes `SUCCESSFUL`, `PARTIAL`, or `FAILED`, so you can fulfil orders in real time instead of polling. **Verify every webhook before acting on it** — `constructEvent` checks the HMAC-SHA256 signature and the replay window, and throws `WayaPayWebhookException` on anything it can't trust.
+
+The signature is computed over the **exact raw request bytes**. Capture the body before any JSON middleware re-serialises it, or the recomputed HMAC won't match.
 
 ```java
-@Configuration
-public class RestTemplateConfig {
+import com.waya.wayapay.WayaPayWebhook;
+import com.waya.wayapay.WayaPayWebhookException;
+import com.waya.wayapay.model.WebhookEvent;
 
-    @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
+// Spring MVC example. Take the body as a raw String so nothing re-serialises it.
+@PostMapping("/waya/webhook")
+public ResponseEntity<Void> handle(@RequestBody String rawBody,
+                                   @RequestHeader(WayaPayWebhook.TIMESTAMP_HEADER) String timestamp,
+                                   @RequestHeader(WayaPayWebhook.SIGNATURE_HEADER) String signature) {
+    WebhookEvent evt;
+    try {
+        evt = WayaPayWebhook.constructEvent(rawBody, timestamp, signature, webhookSecret);
+    } catch (WayaPayWebhookException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // unsigned / forged / stale
     }
+
+    // Acknowledge fast (within ~10s), then queue the real work. orderId() is your idempotency key.
+    switch (evt.parsedStatus()) {
+        case SUCCESSFUL -> { /* upsert by evt.orderId(), then fulfil */ }
+        case PARTIAL    -> { /* hold; query status by orderId for amount paid */ }
+        case FAILED     -> { /* no fulfilment */ }
+        default         -> { /* UNKNOWN — reconcile */ }
+    }
+    return ResponseEntity.ok().build();
 }
 ```
 
----
+**Returns** `WebhookEvent` — `.orderId()`, `.amount()`, `.fee()`, `.currency()`, `.status()`, `.description()`, `.tranTime()`, `.transactionDate()`, `.productName()`, `.businessName()`, `.customer()` (`.name()`, `.email()`, `.phoneNumber()`, `.customerId()`), `.merchantId()`, `.branchCategory()`, `.recurrentPayment()`. Parse `.status()` with `.parsedStatus()` → `WebhookStatus`. Throws `WayaPayWebhookException` instead of returning when verification fails.
 
-# Maven Dependencies
+| `status` | `WebhookStatus` | What to do |
+|----------|-----------------|------------|
+| `SUCCESSFUL` | `SUCCESSFUL` | Fulfil the order. Check `orderId()` for idempotency. |
+| `PARTIAL`    | `PARTIAL`    | Hold fulfilment — query the status endpoint by `orderId` for the latest amount paid. |
+| `FAILED`     | `FAILED`     | No fulfilment. |
 
-```xml
-<dependencies>
+Notes:
+- The merchant secret is your `merchantSecretTestKey` (TEST) or `merchantProductionSecretKey` (PRODUCTION). Keep one verifier per environment and route by which key validates.
+- The same `orderId` may fire more than once (a `PARTIAL` then a `SUCCESSFUL`, or a re-emitted `SUCCESSFUL`). Always **upsert** keyed by `orderId`; never blindly insert.
+- Replay protection rejects timestamps outside a 5-minute window by default. Override via the `tolerance` overload (pass a negative `Duration` to disable — not recommended).
 
-    <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-web</artifactId>
-        <version>6.1.8</version>
-    </dependency>
+For a signature-only check (no replay window), use `WayaPayWebhook.verifySignature(...)`, which returns a `boolean`.
 
-    <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-databind</artifactId>
-    </dependency>
+### Via the client
 
-    <dependency>
-        <groupId>org.projectlombok</groupId>
-        <artifactId>lombok</artifactId>
-        <optional>true</optional>
-    </dependency>
+If you set `webhookSecret(...)` on the options, the same calls are available on the client without passing the secret each time:
 
-    <dependency>
-        <groupId>org.apache.httpcomponents.client5</groupId>
-        <artifactId>httpclient5</artifactId>
-        <version>5.3.1</version>
-    </dependency>
-
-</dependencies>
+```java
+WebhookEvent evt = client.webhooks().constructEvent(rawBody, timestamp, signature);
 ```
 
----
+`client.webhooks().constructEvent` / `verifySignature` also have overloads that take an explicit `secret`, so a single endpoint can route TEST vs PRODUCTION by trying each key.
 
-# Build the SDK
+## BVN identity check
+
+```java
+BvnResponse identity = client.identity().verifyBvn("22500809037"); // exactly 11 digits — validated locally
+System.out.println(identity.firstName() + " " + identity.lastName());
+```
+
+**Returns** `BvnResponse` — `.bvn()`, `.firstName()`, `.middleName()`, `.lastName()`, `.dateOfBirth()`, `.gender()`, `.phoneNumber1()`, `.email()`, `.nationality()`, `.stateOfOrigin()`, `.lgaOfOrigin()`, `.lgaOfResidence()`, `.residentialAddress()`, `.maritalStatus()`, `.registrationDate()`, `.watchListed()`, `.base64Image()`.
+
+BVN data is sensitive personal information. Store, transmit, and log it only as your data-protection obligations allow.
+
+## Error handling
+
+Failed requests throw `WayaPayException` with the API message as the exception message and the HTTP status on `.statusCode()`.
+
+```java
+try {
+    client.payouts().initiate(input);
+} catch (WayaPayException e) {
+    System.err.println(e.getMessage());  // e.g. "IP 1.2.3.4 is not whitelisted"
+    System.err.println(e.statusCode());  // e.g. 403
+}
+```
+
+Input validation errors (missing required fields, malformed BVN, missing `bankCode`) throw `IllegalArgumentException` **before** any network call is made.
+
+Retries apply to **GET requests only** (bank list, status checks) on timeouts, network errors, 429, and 5xx with exponential backoff. Writes never auto-retry.
+
+## Full example
+
+See [Demo.java](src/main/java/com/waya/wayapay/examples/Demo.java) for a runnable end-to-end demo covering banks, account verification, BVN, payouts, collections, status checks, and webhook verification.
 
 ```bash
-mvn clean install
+WAYA_MERCHANT_ID=MER_... WAYA_SECRET_KEY=WAYASECK_TEST_... \
+  mvn -q exec:java -Dexec.mainClass=com.waya.wayapay.examples.Demo
 ```
 
-Generated artifact:
+## Going live
 
-```text
-target/wayapay-java-sdk-1.0.0.jar
-```
+On the merchant dashboard: finish KYC, grab your Merchant ID, generate your secret key under **Settings → API Keys and Webhooks**, and whitelist your server IPs. Swap `WAYASECK_TEST_...` for `WAYASECK_...` — the rest of your code stays the same.
 
----
+## Contributing
 
-# Production Usage
+See [CONTRIBUTING.md](CONTRIBUTING.md). Changes are tracked in [CHANGELOG.md](CHANGELOG.md).
 
-Use environment variables for credentials.
+## License
 
-```java
-WayaPayConfig config = new WayaPayConfig(
-        System.getenv("WAYAPAY_MERCHANT_ID"),
-        System.getenv("WAYAPAY_SECRET_KEY"),
-        "production"
-);
-```
-
----
-
-# Example `.env`
-
-```env
-WAYAPAY_MERCHANT_ID=your-merchant-id
-WAYAPAY_SECRET_KEY=your-secret-key
-```
-
----
-
-# Security Recommendations
-
-- Never expose your secret key publicly
-- Store credentials in environment variables
-- Always verify transactions server-side
-- Use unique idempotency keys for retries
-- Verify customer bank accounts before payouts
-
----
-
-# Publishing
-
-## Maven Central (Recommended)
-
-Publish the SDK to Maven Central for public consumption.
-
-## GitHub Packages
-
-Alternative private/public package distribution option.
-
----
-
-# Support
-
-For support and integration assistance:
-
-- Website: https://wayapay.ng
-- Email: support@wayapay.ng
-
----
-
-# License
-
-MIT License
+[MIT](LICENSE)

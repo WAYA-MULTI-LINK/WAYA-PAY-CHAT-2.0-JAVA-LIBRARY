@@ -1,0 +1,56 @@
+# Maven build output
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# Compiled class files
+*.class
+
+# Packaged artifacts
+*.jar
+*.war
+*.ear
+# ...but keep the Maven wrapper scripts under version control
+!mvnw
+!mvnw.cmd
+# ...and DO publish the distributable JARs in artifact/ so they ship with the repo.
+!artifact/
+!artifact/*.jar
+
+# Logs
+*.log
+
+# Gradle (if a consumer adds it)
+.gradle/
+build/
+
+# IDE — IntelliJ / Rider
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# IDE — Eclipse
+.classpath
+.project
+.settings/
+bin/
+
+# IDE — VS Code
+.vscode/
+
+# OS cruft
+.DS_Store
+Thumbs.db
+
+# Local environment / secrets
+.env
+*.local
