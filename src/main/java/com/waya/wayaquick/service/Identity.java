@@ -1,9 +1,9 @@
-package com.waya.wayapay.service;
+package com.waya.wayaquick.service;
 
-import com.waya.wayapay.WayaPayClient;
-import com.waya.wayapay.WayaPayException;
-import com.waya.wayapay.model.BvnRequest;
-import com.waya.wayapay.model.BvnResponse;
+import com.waya.wayaquick.WayaQuickClient;
+import com.waya.wayaquick.WayaQuickException;
+import com.waya.wayaquick.model.BvnRequest;
+import com.waya.wayaquick.model.BvnResponse;
 
 import java.util.regex.Pattern;
 
@@ -12,9 +12,9 @@ public final class Identity {
 
     private static final Pattern ELEVEN_DIGITS = Pattern.compile("^\\d{11}$");
 
-    private final WayaPayClient client;
+    private final WayaQuickClient client;
 
-    public Identity(WayaPayClient client) {
+    public Identity(WayaQuickClient client) {
         this.client = client;
     }
 
@@ -23,7 +23,7 @@ public final class Identity {
      * the request is sent.
      *
      * @throws IllegalArgumentException if the BVN is not exactly 11 digits
-     * @throws WayaPayException         on an API error
+     * @throws WayaQuickException         on an API error
      */
     public BvnResponse verifyBvn(BvnRequest input) {
         if (input == null)
@@ -34,7 +34,7 @@ public final class Identity {
         BvnResponse data = client.request(
                 "POST", "/identity-verification/bvn", input, null, client.type(BvnResponse.class));
         if (data == null)
-            throw new WayaPayException("Empty response data from /identity-verification/bvn");
+            throw new WayaQuickException("Empty response data from /identity-verification/bvn");
         return data;
     }
 

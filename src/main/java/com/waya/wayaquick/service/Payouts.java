@@ -1,13 +1,13 @@
-package com.waya.wayapay.service;
+package com.waya.wayaquick.service;
 
-import com.waya.wayapay.WayaPayClient;
-import com.waya.wayapay.WayaPayException;
-import com.waya.wayapay.model.Bank;
-import com.waya.wayapay.model.PayoutRequest;
-import com.waya.wayapay.model.PayoutResponse;
-import com.waya.wayapay.model.PayoutStatusResponse;
-import com.waya.wayapay.model.VerifyAccountRequest;
-import com.waya.wayapay.model.VerifyAccountResponse;
+import com.waya.wayaquick.WayaQuickClient;
+import com.waya.wayaquick.WayaQuickException;
+import com.waya.wayaquick.model.Bank;
+import com.waya.wayaquick.model.PayoutRequest;
+import com.waya.wayaquick.model.PayoutResponse;
+import com.waya.wayaquick.model.PayoutStatusResponse;
+import com.waya.wayaquick.model.VerifyAccountRequest;
+import com.waya.wayaquick.model.VerifyAccountResponse;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -16,9 +16,9 @@ import java.util.List;
 /** Payout (disbursement), bank-list, and account-verification endpoints. */
 public final class Payouts {
 
-    private final WayaPayClient client;
+    private final WayaQuickClient client;
 
-    public Payouts(WayaPayClient client) {
+    public Payouts(WayaQuickClient client) {
         this.client = client;
     }
 
@@ -35,7 +35,7 @@ public final class Payouts {
      * initiating a payout.
      *
      * @throws IllegalArgumentException if {@code bankCode} is missing for an "OTHERS" enquiry
-     * @throws WayaPayException         on an API error
+     * @throws WayaQuickException         on an API error
      */
     public VerifyAccountResponse verifyAccount(VerifyAccountRequest input) {
         if (input == null)
@@ -46,7 +46,7 @@ public final class Payouts {
         VerifyAccountResponse data = client.request(
                 "POST", "/verify-account", input, null, client.type(VerifyAccountResponse.class));
         if (data == null)
-            throw new WayaPayException("Empty response data from /verify-account");
+            throw new WayaQuickException("Empty response data from /verify-account");
         return data;
     }
 
@@ -54,7 +54,7 @@ public final class Payouts {
      * {@code POST /payment-payout/initiate}. PROCESSING means accepted, not settled.
      * Confirm via webhook or status check with the reference before treating as delivered.
      *
-     * @throws WayaPayException on an API error
+     * @throws WayaQuickException on an API error
      */
     public PayoutResponse initiate(PayoutRequest input) {
         if (input == null)
@@ -63,7 +63,7 @@ public final class Payouts {
         PayoutResponse data = client.request(
                 "POST", "/payment-payout/initiate", input, null, client.type(PayoutResponse.class));
         if (data == null)
-            throw new WayaPayException("Empty response data from /payment-payout/initiate");
+            throw new WayaQuickException("Empty response data from /payment-payout/initiate");
         return data;
     }
 
@@ -73,7 +73,7 @@ public final class Payouts {
      * to another merchant (or a different environment) returns 404.
      *
      * @throws IllegalArgumentException if {@code reference} is blank
-     * @throws WayaPayException         on an API error
+     * @throws WayaQuickException         on an API error
      */
     public PayoutStatusResponse getStatus(String reference) {
         if (reference == null || reference.isBlank())
@@ -83,7 +83,7 @@ public final class Payouts {
         PayoutStatusResponse data = client.request(
                 "GET", path, null, null, client.type(PayoutStatusResponse.class));
         if (data == null)
-            throw new WayaPayException("Empty response data from " + path);
+            throw new WayaQuickException("Empty response data from " + path);
         return data;
     }
 }

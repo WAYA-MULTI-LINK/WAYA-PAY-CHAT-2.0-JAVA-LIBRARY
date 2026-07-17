@@ -1,4 +1,4 @@
-# WayaPay Java SDK
+# WayaQuick Java SDK
 
 Java client for the **WayaQuick Merchant API v2**. Collect payments, send payouts, verify bank accounts, and run BVN identity checks in Nigeria.
 
@@ -15,7 +15,7 @@ install it from GitHub in three steps: **download the zip**, **unzip it**, then 
 Open the zip on GitHub and click **Download raw file**, or `curl` the raw URL:
 
 ```bash
-curl -L -O https://github.com/WAYA-MULTI-LINK/WAYA-PAY-CHAT-2.0-JAVA-LIBRARY/raw/main/artifact/version2.0.0/wayapay-java-sdk-2.0.0.zip
+curl -L -O https://github.com/WAYA-MULTI-LINK/WAYA-PAY-CHAT-2.0-JAVA-LIBRARY/raw/main/artifact/version2.0.0/wayaquick-integration-2.0.0.zip
 ```
 
 The zip contains the library JAR, the sources JAR, and the POM.
@@ -26,8 +26,8 @@ The zip contains the library JAR, the sources JAR, and the POM.
 ### Step 2 — Unzip it
 
 ```bash
-unzip wayapay-java-sdk-2.0.0.zip
-# -> wayapay-java-sdk-2.0.0.jar, wayapay-java-sdk-2.0.0-sources.jar, wayapay-java-sdk-2.0.0.pom
+unzip wayaquick-integration-2.0.0.zip
+# -> wayaquick-integration-2.0.0.jar, wayaquick-integration-2.0.0-sources.jar, wayaquick-integration-2.0.0.pom
 ```
 
 ### Step 3 — Install it into your local Maven repo
@@ -36,12 +36,12 @@ From the folder where you unzipped the files, run:
 
 ```bash
 mvn install:install-file \
-  -Dfile=wayapay-java-sdk-2.0.0.jar \
-  -DpomFile=wayapay-java-sdk-2.0.0.pom \
-  -Dsources=wayapay-java-sdk-2.0.0-sources.jar
+  -Dfile=wayaquick-integration-2.0.0.jar \
+  -DpomFile=wayaquick-integration-2.0.0.pom \
+  -Dsources=wayaquick-integration-2.0.0-sources.jar
 ```
 
-This places the SDK in `~/.m2/repository/com/waya/wayapay-java-sdk/2.0.0/`. The `-DpomFile` flag is
+This places the SDK in `~/.m2/repository/com/waya/wayaquick-integration/2.0.0/`. The `-DpomFile` flag is
 what makes Jackson resolve transitively — without it you'd have to add Jackson by hand.
 
 ### Step 4 — Declare the dependency
@@ -52,7 +52,7 @@ In your project's `pom.xml`:
 <dependencies>
     <dependency>
         <groupId>com.waya</groupId>
-        <artifactId>wayapay-java-sdk</artifactId>
+        <artifactId>wayaquick-integration</artifactId>
         <version>2.0.0</version>
     </dependency>
 </dependencies>
@@ -74,7 +74,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.waya:wayapay-java-sdk:2.0.0'
+    implementation 'com.waya:wayaquick-integration:2.0.0'
 }
 
 java {
@@ -90,7 +90,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.waya:wayapay-java-sdk:2.0.0")
+    implementation("com.waya:wayaquick-integration:2.0.0")
 }
 
 java {
@@ -98,7 +98,7 @@ java {
 }
 ```
 
-Prefer not to install into `~/.m2`? Drop the downloaded `wayapay-java-sdk-2.0.0.jar` into a `libs/`
+Prefer not to install into `~/.m2`? Drop the downloaded `wayaquick-integration-2.0.0.jar` into a `libs/`
 folder and use a flat-dir repository instead (you must then add Jackson yourself):
 
 ```groovy
@@ -108,7 +108,7 @@ repositories {
 }
 
 dependencies {
-    implementation name: 'wayapay-java-sdk-2.0.0'
+    implementation name: 'wayaquick-integration-2.0.0'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.1'
 }
 ```
@@ -118,7 +118,7 @@ dependencies {
 ```bash
 git clone https://github.com/WAYA-MULTI-LINK/WAYA-PAY-CHAT-2.0-JAVA-LIBRARY.git
 cd WAYA-PAY-CHAT-2.0-JAVA-LIBRARY
-mvn clean install   # builds, tests, and installs to ~/.m2 — artifact: target/wayapay-java-sdk-2.0.0.jar
+mvn clean install   # builds, tests, and installs to ~/.m2 — artifact: target/wayaquick-integration-2.0.0.jar
 ```
 
 Not using Maven? See [`artifact/README.md`](artifact/README.md) for Maven `system`-scope, Gradle
@@ -127,15 +127,15 @@ flat-dir, and plain-classpath setups.
 ## Quickstart
 
 ```java
-import com.waya.wayapay.WayaPayClient;
+import com.waya.wayaquick.WayaQuickClient;
 
 // Shorthand — default base URL and settings:
-WayaPayClient client = new WayaPayClient(
+WayaQuickClient client = new WayaQuickClient(
         "MER_...",            // merchant ID, from the dashboard
         "WAYASECK_TEST_...");  // swap for WAYASECK_... on live
 
 // Or with full options:
-WayaPayClient client = new WayaPayClient(WayaPayOptions.builder()
+WayaQuickClient client = new WayaQuickClient(WayaQuickOptions.builder()
         .merchantId("MER_...")
         .secretKey("WAYASECK_TEST_...")
         .webhookSecret("...")   // optional: enables client.webhooks() without passing a secret
@@ -159,9 +159,9 @@ The client is thread-safe — build one and share it.
 | `client.identity().verifyBvn(…)` | `BvnResponse` |
 | `client.webhooks().constructEvent(…)` | `WebhookEvent` |
 | `client.webhooks().verifySignature(…)` | `boolean` |
-| `WayaPayClient.generateReference(prefix)` | `String` |
+| `WayaQuickClient.generateReference(prefix)` | `String` |
 
-Every API call returns the unwrapped payload directly and throws `WayaPayException` on failure.
+Every API call returns the unwrapped payload directly and throws `WayaQuickException` on failure.
 
 ## List banks
 
@@ -192,7 +192,7 @@ PayoutResponse payout = client.payouts().initiate(PayoutRequest.builder()
         .accountNumber("0123456789")
         .bankCode("044")
         .accountName(account.accountName())
-        .reference(WayaPayClient.generateReference("PAYOUT"))
+        .reference(WayaQuickClient.generateReference("PAYOUT"))
         .narration("April salary")
         .build());
 // payout.status() == "PROCESSING" means accepted, not yet settled
@@ -231,7 +231,7 @@ CollectionResponse collection = client.collection().initiate(CollectionRequest.b
         .amount("1500.00")
         .currency("NGN")
         .email("customer@example.com")
-        .transactionId(WayaPayClient.generateReference("TXN"))
+        .transactionId(WayaQuickClient.generateReference("TXN"))
         .firstName("John")
         .lastName("Doe")
         .phone("08012345678")
@@ -269,28 +269,28 @@ if (deposit.parsedStatus() == CollectionStatus.SUCCESSFUL) {
 | `FAILED` / `DECLINED` / `REJECTED` / `ABANDONED` / `EXPIRED` / `CANCELLED` / `CUSTOMER_ERROR` / `FRAUD_ERROR` | yes | `NOT_DEBITED` | Customer not debited — no fulfilment. |
 | `TIMEOUT` / `ERROR` / `SYSTEM_ERROR` / `BANK_ERROR` | yes | `INDETERMINATE` | Outcome unknown — reconcile, don't refund unilaterally. |
 
-A reference that doesn't belong to the authenticated merchant returns `404` (surfaced as `WayaPayException` with `statusCode() == 404`).
+A reference that doesn't belong to the authenticated merchant returns `404` (surfaced as `WayaQuickException` with `statusCode() == 404`).
 
 ## Process webhooks
 
-WayaPay POSTs your server whenever a transaction becomes `SUCCESSFUL`, `PARTIAL`, or `FAILED`, so you can fulfil orders in real time instead of polling. **Verify every webhook before acting on it** — `constructEvent` checks the HMAC-SHA256 signature and the replay window, and throws `WayaPayWebhookException` on anything it can't trust.
+WayaQuick POSTs your server whenever a transaction becomes `SUCCESSFUL`, `PARTIAL`, or `FAILED`, so you can fulfil orders in real time instead of polling. **Verify every webhook before acting on it** — `constructEvent` checks the HMAC-SHA256 signature and the replay window, and throws `WayaQuickWebhookException` on anything it can't trust.
 
 The signature is computed over the **exact raw request bytes**. Capture the body before any JSON middleware re-serialises it, or the recomputed HMAC won't match.
 
 ```java
-import com.waya.wayapay.WayaPayWebhook;
-import com.waya.wayapay.WayaPayWebhookException;
-import com.waya.wayapay.model.WebhookEvent;
+import com.waya.wayaquick.WayaQuickWebhook;
+import com.waya.wayaquick.WayaQuickWebhookException;
+import com.waya.wayaquick.model.WebhookEvent;
 
 // Spring MVC example. Take the body as a raw String so nothing re-serialises it.
 @PostMapping("/waya/webhook")
 public ResponseEntity<Void> handle(@RequestBody String rawBody,
-                                   @RequestHeader(WayaPayWebhook.TIMESTAMP_HEADER) String timestamp,
-                                   @RequestHeader(WayaPayWebhook.SIGNATURE_HEADER) String signature) {
+                                   @RequestHeader(WayaQuickWebhook.TIMESTAMP_HEADER) String timestamp,
+                                   @RequestHeader(WayaQuickWebhook.SIGNATURE_HEADER) String signature) {
     WebhookEvent evt;
     try {
-        evt = WayaPayWebhook.constructEvent(rawBody, timestamp, signature, webhookSecret);
-    } catch (WayaPayWebhookException e) {
+        evt = WayaQuickWebhook.constructEvent(rawBody, timestamp, signature, webhookSecret);
+    } catch (WayaQuickWebhookException e) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // unsigned / forged / stale
     }
 
@@ -305,7 +305,7 @@ public ResponseEntity<Void> handle(@RequestBody String rawBody,
 }
 ```
 
-**Returns** `WebhookEvent` — `.orderId()`, `.amount()`, `.fee()`, `.currency()`, `.status()`, `.description()`, `.tranTime()`, `.transactionDate()`, `.productName()`, `.businessName()`, `.customer()` (`.name()`, `.email()`, `.phoneNumber()`, `.customerId()`), `.merchantId()`, `.branchCategory()`, `.recurrentPayment()`. Parse `.status()` with `.parsedStatus()` → `WebhookStatus`. Throws `WayaPayWebhookException` instead of returning when verification fails.
+**Returns** `WebhookEvent` — `.orderId()`, `.amount()`, `.fee()`, `.currency()`, `.status()`, `.description()`, `.tranTime()`, `.transactionDate()`, `.productName()`, `.businessName()`, `.customer()` (`.name()`, `.email()`, `.phoneNumber()`, `.customerId()`), `.merchantId()`, `.branchCategory()`, `.recurrentPayment()`. Parse `.status()` with `.parsedStatus()` → `WebhookStatus`. Throws `WayaQuickWebhookException` instead of returning when verification fails.
 
 | `status` | `WebhookStatus` | What to do |
 |----------|-----------------|------------|
@@ -318,7 +318,7 @@ Notes:
 - The same `orderId` may fire more than once (a `PARTIAL` then a `SUCCESSFUL`, or a re-emitted `SUCCESSFUL`). Always **upsert** keyed by `orderId`; never blindly insert.
 - Replay protection rejects timestamps outside a 5-minute window by default. Override via the `tolerance` overload (pass a negative `Duration` to disable — not recommended).
 
-For a signature-only check (no replay window), use `WayaPayWebhook.verifySignature(...)`, which returns a `boolean`.
+For a signature-only check (no replay window), use `WayaQuickWebhook.verifySignature(...)`, which returns a `boolean`.
 
 ### Via the client
 
@@ -343,12 +343,12 @@ BVN data is sensitive personal information. Store, transmit, and log it only as 
 
 ## Error handling
 
-Failed requests throw `WayaPayException` with the API message as the exception message and the HTTP status on `.statusCode()`.
+Failed requests throw `WayaQuickException` with the API message as the exception message and the HTTP status on `.statusCode()`.
 
 ```java
 try {
     client.payouts().initiate(input);
-} catch (WayaPayException e) {
+} catch (WayaQuickException e) {
     System.err.println(e.getMessage());  // e.g. "IP 1.2.3.4 is not whitelisted"
     System.err.println(e.statusCode());  // e.g. 403
 }
@@ -360,11 +360,11 @@ Retries apply to **GET requests only** (bank list, status checks) on timeouts, n
 
 ## Full example
 
-See [Demo.java](src/main/java/com/waya/wayapay/examples/Demo.java) for a runnable end-to-end demo covering banks, account verification, BVN, payouts, collections, status checks, and webhook verification.
+See [Demo.java](src/main/java/com/waya/wayaquick/examples/Demo.java) for a runnable end-to-end demo covering banks, account verification, BVN, payouts, collections, status checks, and webhook verification.
 
 ```bash
 WAYA_MERCHANT_ID=MER_... WAYA_SECRET_KEY=WAYASECK_TEST_... \
-  mvn -q exec:java -Dexec.mainClass=com.waya.wayapay.examples.Demo
+  mvn -q exec:java -Dexec.mainClass=com.waya.wayaquick.examples.Demo
 ```
 
 ## Going live

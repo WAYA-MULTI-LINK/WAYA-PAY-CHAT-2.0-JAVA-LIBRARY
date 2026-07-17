@@ -31,7 +31,7 @@ jobs:
           cp target/*.jar release/
           # Ship the POM so consumers can `mvn install:install-file -DpomFile=...`
           VERSION=$(mvn -q -DforceStdout help:evaluate -Dexpression=project.version)
-          cp pom.xml "release/wayapay-java-sdk-${VERSION}.pom"
+          cp pom.xml "release/wayaquick-integration-${VERSION}.pom"
           ls -la release/
 
       - name: Publish GitHub Release

@@ -1,4 +1,4 @@
-package com.waya.wayapay.model;
+package com.waya.wayaquick.model;
 
 /**
  * Known values of {@link CollectionStatusResponse#status()}.

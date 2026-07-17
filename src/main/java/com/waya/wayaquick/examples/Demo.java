@@ -1,20 +1,20 @@
-package com.waya.wayapay.examples;
+package com.waya.wayaquick.examples;
 
-import com.waya.wayapay.WayaPayClient;
-import com.waya.wayapay.WayaPayWebhook;
-import com.waya.wayapay.WayaPayWebhookException;
-import com.waya.wayapay.model.Bank;
-import com.waya.wayapay.model.BvnResponse;
-import com.waya.wayapay.model.CollectionRequest;
-import com.waya.wayapay.model.CollectionResponse;
-import com.waya.wayapay.model.CollectionStatus;
-import com.waya.wayapay.model.CollectionStatusResponse;
-import com.waya.wayapay.model.PayoutRequest;
-import com.waya.wayapay.model.PayoutResponse;
-import com.waya.wayapay.model.PayoutStatusResponse;
-import com.waya.wayapay.model.VerifyAccountRequest;
-import com.waya.wayapay.model.VerifyAccountResponse;
-import com.waya.wayapay.model.WebhookEvent;
+import com.waya.wayaquick.WayaQuickClient;
+import com.waya.wayaquick.WayaQuickWebhook;
+import com.waya.wayaquick.WayaQuickWebhookException;
+import com.waya.wayaquick.model.Bank;
+import com.waya.wayaquick.model.BvnResponse;
+import com.waya.wayaquick.model.CollectionRequest;
+import com.waya.wayaquick.model.CollectionResponse;
+import com.waya.wayaquick.model.CollectionStatus;
+import com.waya.wayaquick.model.CollectionStatusResponse;
+import com.waya.wayaquick.model.PayoutRequest;
+import com.waya.wayaquick.model.PayoutResponse;
+import com.waya.wayaquick.model.PayoutStatusResponse;
+import com.waya.wayaquick.model.VerifyAccountRequest;
+import com.waya.wayaquick.model.VerifyAccountResponse;
+import com.waya.wayaquick.model.WebhookEvent;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -26,13 +26,13 @@ import java.util.Base64;
  * Runnable end-to-end demo. Run with:
  * <pre>
  *   WAYA_MERCHANT_ID=MER_... WAYA_SECRET_KEY=WAYASECK_TEST_... \
- *     mvn -q exec:java -Dexec.mainClass=com.waya.wayapay.examples.Demo
+ *     mvn -q exec:java -Dexec.mainClass=com.waya.wayaquick.examples.Demo
  * </pre>
  */
 public final class Demo {
 
     public static void main(String[] args) {
-        WayaPayClient client = new WayaPayClient(
+        WayaQuickClient client = new WayaQuickClient(
                 System.getenv("WAYA_MERCHANT_ID"),
                 System.getenv("WAYA_SECRET_KEY"));
 
@@ -63,7 +63,7 @@ public final class Demo {
                     .accountNumber(verified.accountNumber())
                     .bankCode("044")
                     .accountName(verified.accountName())
-                    .reference(WayaPayClient.generateReference("PAYOUT"))
+                    .reference(WayaQuickClient.generateReference("PAYOUT"))
                     .narration("Demo payout")
                     .build());
             System.out.println("Payout: " + payout.payoutReference() + " — " + payout.status());
@@ -82,7 +82,7 @@ public final class Demo {
                     .amount("1500.00")
                     .currency("NGN")
                     .email("customer@example.com")
-                    .transactionId(WayaPayClient.generateReference("TXN"))
+                    .transactionId(WayaQuickClient.generateReference("TXN"))
                     .firstName("John")
                     .lastName("Doe")
                     .phone("08012345678")
@@ -96,7 +96,7 @@ public final class Demo {
             if (deposit.parsedStatus() == CollectionStatus.SUCCESSFUL)
                 System.out.println("Funds confirmed — fulfil using refNo " + deposit.refNo());
 
-            // 8. Verify a webhook (offline demo). In production WayaPay POSTs this to your HTTPS endpoint;
+            // 8. Verify a webhook (offline demo). In production WayaQuick POSTs this to your HTTPS endpoint;
             //    here we sign a sample body locally to show the verification flow end to end.
             final String webhookSecret = "WAYASECK_TEST_demo_webhook_secret";
             final String rawBody =
@@ -107,12 +107,12 @@ public final class Demo {
             String signature = hmacBase64(webhookSecret, timestamp + "." + rawBody);
 
             try {
-                WebhookEvent evt = WayaPayWebhook.constructEvent(rawBody, timestamp, signature, webhookSecret);
+                WebhookEvent evt = WayaQuickWebhook.constructEvent(rawBody, timestamp, signature, webhookSecret);
                 System.out.printf("Webhook verified: %s — %s (%s %s)%n",
                         evt.orderId(), evt.status(), evt.amount(), evt.currency());
                 if (evt.shouldFulfil())
                     System.out.println("  Fulfil order — idempotency key " + evt.orderId());
-            } catch (WayaPayWebhookException e) {
+            } catch (WayaQuickWebhookException e) {
                 System.err.println("Rejected webhook: " + e.getMessage());
             }
         } catch (Exception e) {

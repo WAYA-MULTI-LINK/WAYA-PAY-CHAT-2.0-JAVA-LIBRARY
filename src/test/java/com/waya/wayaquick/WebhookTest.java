@@ -1,7 +1,7 @@
-package com.waya.wayapay;
+package com.waya.wayaquick;
 
-import com.waya.wayapay.model.WebhookEvent;
-import com.waya.wayapay.model.WebhookStatus;
+import com.waya.wayaquick.model.WebhookEvent;
+import com.waya.wayaquick.model.WebhookStatus;
 import org.junit.jupiter.api.Test;
 
 import javax.crypto.Mac;
@@ -36,7 +36,7 @@ class WebhookTest {
         String ts = String.valueOf(System.currentTimeMillis());
         String sig = sign(SECRET, ts, BODY);
 
-        WebhookEvent evt = WayaPayWebhook.constructEvent(BODY, ts, sig, SECRET);
+        WebhookEvent evt = WayaQuickWebhook.constructEvent(BODY, ts, sig, SECRET);
 
         assertEquals("1779662251460508970", evt.orderId());
         assertEquals(WebhookStatus.SUCCESSFUL, evt.parsedStatus());
@@ -51,8 +51,8 @@ class WebhookTest {
         String ts = String.valueOf(System.currentTimeMillis());
         String sig = sign("the-wrong-secret", ts, BODY);
 
-        assertThrows(WayaPayWebhookException.class,
-                () -> WayaPayWebhook.constructEvent(BODY, ts, sig, SECRET));
+        assertThrows(WayaQuickWebhookException.class,
+                () -> WayaQuickWebhook.constructEvent(BODY, ts, sig, SECRET));
     }
 
     @Test
@@ -60,8 +60,8 @@ class WebhookTest {
         String oldTs = String.valueOf(System.currentTimeMillis() - Duration.ofMinutes(10).toMillis());
         String sig = sign(SECRET, oldTs, BODY);
 
-        WayaPayWebhookException ex = assertThrows(WayaPayWebhookException.class,
-                () -> WayaPayWebhook.constructEvent(BODY, oldTs, sig, SECRET));
+        WayaQuickWebhookException ex = assertThrows(WayaQuickWebhookException.class,
+                () -> WayaQuickWebhook.constructEvent(BODY, oldTs, sig, SECRET));
         assertTrue(ex.getMessage().toLowerCase().contains("replay"));
     }
 
@@ -70,14 +70,14 @@ class WebhookTest {
         String oldTs = String.valueOf(System.currentTimeMillis() - Duration.ofHours(2).toMillis());
         String sig = sign(SECRET, oldTs, BODY);
 
-        WebhookEvent evt = WayaPayWebhook.constructEvent(BODY, oldTs, sig, SECRET, Duration.ofMillis(-1));
+        WebhookEvent evt = WayaQuickWebhook.constructEvent(BODY, oldTs, sig, SECRET, Duration.ofMillis(-1));
         assertEquals("1779662251460508970", evt.orderId());
     }
 
     @Test
     void verifySignatureReturnsFalseForGarbage() {
         String ts = String.valueOf(System.currentTimeMillis());
-        assertFalse(WayaPayWebhook.verifySignature(BODY, ts, "not-base64-!!!", SECRET));
-        assertFalse(WayaPayWebhook.verifySignature(BODY, null, "sig", SECRET));
+        assertFalse(WayaQuickWebhook.verifySignature(BODY, ts, "not-base64-!!!", SECRET));
+        assertFalse(WayaQuickWebhook.verifySignature(BODY, null, "sig", SECRET));
     }
 }

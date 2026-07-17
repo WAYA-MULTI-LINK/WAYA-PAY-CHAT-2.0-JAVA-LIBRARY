@@ -1,4 +1,4 @@
-package com.waya.wayapay.model;
+package com.waya.wayaquick.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

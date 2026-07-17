@@ -1,4 +1,4 @@
-package com.waya.wayapay.model;
+package com.waya.wayaquick.model;
 
 /**
  * Request body for {@code POST /identity-verification/bvn}.

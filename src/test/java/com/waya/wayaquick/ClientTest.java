@@ -1,9 +1,9 @@
-package com.waya.wayapay;
+package com.waya.wayaquick;
 
 import com.sun.net.httpserver.HttpServer;
-import com.waya.wayapay.model.Bank;
-import com.waya.wayapay.model.BvnRequest;
-import com.waya.wayapay.model.VerifyAccountRequest;
+import com.waya.wayaquick.model.Bank;
+import com.waya.wayaquick.model.BvnRequest;
+import com.waya.wayaquick.model.VerifyAccountRequest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,8 +38,8 @@ class ClientTest {
         server.stop(0);
     }
 
-    private WayaPayClient clientWith(int maxRetries) {
-        return new WayaPayClient(WayaPayOptions.builder()
+    private WayaQuickClient clientWith(int maxRetries) {
+        return new WayaQuickClient(WayaQuickOptions.builder()
                 .merchantId("MER_test")
                 .secretKey("WAYASECK_TEST_abc")
                 .baseUrl(baseUrl)
@@ -81,7 +81,7 @@ class ClientTest {
         respond("/verify-account", 200, """
                 {"success":false,"code":"57","message":"IP 1.2.3.4 is not whitelisted"}""");
 
-        WayaPayException ex = assertThrows(WayaPayException.class,
+        WayaQuickException ex = assertThrows(WayaQuickException.class,
                 () -> clientWith(0).payouts().verifyAccount(VerifyAccountRequest.others("0123456789", "044")));
         assertEquals("IP 1.2.3.4 is not whitelisted", ex.getMessage());
     }
@@ -91,7 +91,7 @@ class ClientTest {
         respond("/payment-collect/status/abc", 404, """
                 {"success":false,"message":"not found"}""");
 
-        WayaPayException ex = assertThrows(WayaPayException.class,
+        WayaQuickException ex = assertThrows(WayaQuickException.class,
                 () -> clientWith(0).collection().getStatus("abc"));
         assertEquals(404, ex.statusCode());
     }
@@ -118,7 +118,7 @@ class ClientTest {
     @Test
     void bvnValidatedLocallyBeforeNetwork() {
         // No context registered — if a request escaped, it would 404/timeout. It must not.
-        WayaPayClient client = clientWith(0);
+        WayaQuickClient client = clientWith(0);
         assertThrows(IllegalArgumentException.class, () -> client.identity().verifyBvn(new BvnRequest("123")));
         assertEquals(0, hits.get());
     }
@@ -132,8 +132,8 @@ class ClientTest {
 
     @Test
     void generateReferenceIsPrefixedAndUnique() {
-        String a = WayaPayClient.generateReference("PAYOUT");
-        String b = WayaPayClient.generateReference("PAYOUT");
+        String a = WayaQuickClient.generateReference("PAYOUT");
+        String b = WayaQuickClient.generateReference("PAYOUT");
         assertTrue(a.startsWith("PAYOUT-"));
         assertNotEquals(a, b);
     }

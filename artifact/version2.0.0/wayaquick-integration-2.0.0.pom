@@ -6,12 +6,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.waya</groupId>
-	<artifactId>wayapay-java-sdk</artifactId>
+	<artifactId>wayaquick-integration</artifactId>
 	<version>2.0.0</version>
 	<packaging>jar</packaging>
 
-	<name>WayaPay Java SDK</name>
-	<description>Official Java SDK for the WayaPay payment gateway</description>
+	<name>WayaQuick Java SDK</name>
+	<description>Official Java SDK for the WayaQuick payment gateway</description>
 	<url>https://github.com/WAYA-MULTI-LINK/WAYA-PAY-CHAT-2.0-JAVA-LIBRARY</url>
 
 	<licenses>
@@ -80,7 +80,7 @@
 				</executions>
 			</plugin>
 
-			<!-- Lets you run the bundled demo: mvn exec:java -Dexec.mainClass=com.waya.wayapay.examples.Demo -->
+			<!-- Lets you run the bundled demo: mvn exec:java -Dexec.mainClass=com.waya.wayaquick.examples.Demo -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>

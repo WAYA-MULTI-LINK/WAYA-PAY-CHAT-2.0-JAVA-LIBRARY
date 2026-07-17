@@ -1,8 +1,8 @@
-package com.waya.wayapay;
+package com.waya.wayaquick;
 
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.waya.wayapay.model.WebhookEvent;
+import com.waya.wayaquick.model.WebhookEvent;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -12,12 +12,12 @@ import java.time.Duration;
 import java.util.Base64;
 
 /**
- * Verifies and parses WayaPay transaction webhooks. Signature verification needs no network call,
+ * Verifies and parses WayaQuick transaction webhooks. Signature verification needs no network call,
  * so this is a standalone static helper — pass the raw request body, the signature headers, and the
  * merchant secret for the event's environment.
  *
  * <p><b>CRITICAL:</b> verify every webhook before acting on it. An unsigned or wrongly-signed call is
- * hostile — {@link #constructEvent} throws {@link WayaPayWebhookException} rather than returning a value.
+ * hostile — {@link #constructEvent} throws {@link WayaQuickWebhookException} rather than returning a value.
  *
  * <p>The secret is your {@code merchantSecretTestKey} for a TEST transaction or your
  * {@code merchantProductionSecretKey} for a PRODUCTION one.
@@ -25,7 +25,7 @@ import java.util.Base64;
  * <p>Capture the EXACT raw request bytes before any JSON parsing. If your framework deserialises and
  * re-serialises the body, the recomputed HMAC will not match.
  */
-public final class WayaPayWebhook {
+public final class WayaQuickWebhook {
 
     /** Header carrying the epoch-millisecond timestamp that is signed alongside the body. */
     public static final String TIMESTAMP_HEADER = "X-Waya-Timestamp";
@@ -39,12 +39,12 @@ public final class WayaPayWebhook {
     private static final ObjectMapper MAPPER = new ObjectMapper()
             .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES);
 
-    private WayaPayWebhook() {
+    private WayaQuickWebhook() {
     }
 
     /**
      * Verifies the signature and replay window using {@link #DEFAULT_TOLERANCE}, then parses the body
-     * into a {@link WebhookEvent}. Throws {@link WayaPayWebhookException} if verification fails — never
+     * into a {@link WebhookEvent}. Throws {@link WayaQuickWebhookException} if verification fails — never
      * returns an unverified event.
      */
     public static WebhookEvent constructEvent(String payload, String timestamp, String signature, String secret) {
@@ -69,7 +69,7 @@ public final class WayaPayWebhook {
             throw new IllegalArgumentException("Merchant secret is required.");
 
         if (!verifySignature(payload, timestamp, signature, secret))
-            throw new WayaPayWebhookException("Webhook signature verification failed.");
+            throw new WayaQuickWebhookException("Webhook signature verification failed.");
 
         Duration window = tolerance != null ? tolerance : DEFAULT_TOLERANCE;
         if (!window.isNegative()) {
@@ -77,23 +77,23 @@ public final class WayaPayWebhook {
             try {
                 tsMs = Long.parseLong(timestamp.trim());
             } catch (NumberFormatException e) {
-                throw new WayaPayWebhookException("Webhook timestamp is not a valid epoch-millisecond value.");
+                throw new WayaQuickWebhookException("Webhook timestamp is not a valid epoch-millisecond value.");
             }
             long skewMs = Math.abs(System.currentTimeMillis() - tsMs);
             if (skewMs > window.toMillis())
-                throw new WayaPayWebhookException(
+                throw new WayaQuickWebhookException(
                         "Webhook timestamp is outside the " + window.toSeconds() + "s tolerance window (possible replay).");
         }
 
         try {
             WebhookEvent evt = MAPPER.readValue(payload, WebhookEvent.class);
             if (evt == null)
-                throw new WayaPayWebhookException("Webhook body deserialised to null.");
+                throw new WayaQuickWebhookException("Webhook body deserialised to null.");
             return evt;
-        } catch (WayaPayWebhookException e) {
+        } catch (WayaQuickWebhookException e) {
             throw e;
         } catch (Exception e) {
-            throw new WayaPayWebhookException("Webhook body is not valid JSON.", e);
+            throw new WayaQuickWebhookException("Webhook body is not valid JSON.", e);
         }
     }
 

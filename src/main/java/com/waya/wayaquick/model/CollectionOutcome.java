@@ -1,4 +1,4 @@
-package com.waya.wayapay.model;
+package com.waya.wayaquick.model;
 
 /** How a {@link CollectionStatus} should be acted on. */
 public enum CollectionOutcome {

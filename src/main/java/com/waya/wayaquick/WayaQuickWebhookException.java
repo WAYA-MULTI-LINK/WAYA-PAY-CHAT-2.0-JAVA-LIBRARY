@@ -1,13 +1,13 @@
-package com.waya.wayapay;
+package com.waya.wayaquick;
 
 /** Thrown when a webhook fails signature verification, replay checks, or cannot be parsed. */
-public class WayaPayWebhookException extends RuntimeException {
+public class WayaQuickWebhookException extends RuntimeException {
 
-    public WayaPayWebhookException(String message) {
+    public WayaQuickWebhookException(String message) {
         super(message);
     }
 
-    public WayaPayWebhookException(String message, Throwable cause) {
+    public WayaQuickWebhookException(String message, Throwable cause) {
         super(message, cause);
     }
 }

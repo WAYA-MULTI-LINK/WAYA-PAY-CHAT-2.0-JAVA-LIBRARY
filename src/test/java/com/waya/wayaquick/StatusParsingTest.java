@@ -1,10 +1,10 @@
-package com.waya.wayapay;
+package com.waya.wayaquick;
 
-import com.waya.wayapay.model.CollectionOutcome;
-import com.waya.wayapay.model.CollectionStatus;
-import com.waya.wayapay.model.PayoutOutcome;
-import com.waya.wayapay.model.PayoutStatus;
-import com.waya.wayapay.model.WebhookStatus;
+import com.waya.wayaquick.model.CollectionOutcome;
+import com.waya.wayaquick.model.CollectionStatus;
+import com.waya.wayaquick.model.PayoutOutcome;
+import com.waya.wayaquick.model.PayoutStatus;
+import com.waya.wayaquick.model.WebhookStatus;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

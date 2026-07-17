@@ -1,12 +1,12 @@
-package com.waya.wayapay.model;
+package com.waya.wayaquick.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.math.BigDecimal;
 
 /**
- * A transaction webhook delivered by WayaPay when a payment becomes SUCCESSFUL, PARTIAL, or FAILED.
- * Construct one only via {@link com.waya.wayapay.WayaPayWebhook#constructEvent}, which verifies the
+ * A transaction webhook delivered by WayaQuick when a payment becomes SUCCESSFUL, PARTIAL, or FAILED.
+ * Construct one only via {@link com.waya.wayaquick.WayaQuickWebhook#constructEvent}, which verifies the
  * signature first. Use {@link #orderId()} as your idempotency key — the same OrderId may fire more
  * than once (e.g. a PARTIAL followed by a SUCCESSFUL).
  *
@@ -33,7 +33,7 @@ public record WebhookEvent(
         String transactionDate,
         /** Channel: "CARD", "WALLET", "USSD", "BANK", "PAYATTITUDE". */
         String productName,
-        /** Your business name as registered on WayaPay. */
+        /** Your business name as registered on WayaQuick. */
         String businessName,
         /** The paying customer's details. */
         WebhookCustomer customer,

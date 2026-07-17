@@ -1,16 +1,16 @@
-package com.waya.wayapay;
+package com.waya.wayaquick;
 
 import java.net.http.HttpClient;
 import java.time.Duration;
 
 /**
- * Configuration for {@link WayaPayClient}. Build with {@link #builder()}.
+ * Configuration for {@link WayaQuickClient}. Build with {@link #builder()}.
  *
  * <p>
  * {@code merchantId} and {@code secretKey} are required; everything else has a
  * sensible default.
  */
-public final class WayaPayOptions {
+public final class WayaQuickOptions {
 
     /** Default base URL — WayaQuick Merchant API v2 (production). */
     public static final String DEFAULT_BASE_URL = "https://services.wayapay.ng/merchant-middleware/api/v2";
@@ -23,7 +23,7 @@ public final class WayaPayOptions {
     private final int maxRetries;
     private final HttpClient httpClient;
 
-    private WayaPayOptions(Builder b) {
+    private WayaQuickOptions(Builder b) {
         this.merchantId = b.merchantId;
         this.secretKey = b.secretKey;
         this.webhookSecret = b.webhookSecret;
@@ -44,7 +44,7 @@ public final class WayaPayOptions {
     }
 
     /**
-     * Optional. Merchant webhook secret used by {@link WayaPayClient#webhooks()} to
+     * Optional. Merchant webhook secret used by {@link WayaQuickClient#webhooks()} to
      * verify incoming
      * webhooks (your merchantSecretTestKey on TEST, merchantProductionSecretKey on
      * PRODUCTION).
@@ -131,7 +131,7 @@ public final class WayaPayOptions {
             return this;
         }
 
-        public WayaPayOptions build() {
+        public WayaQuickOptions build() {
             if (merchantId == null || merchantId.isEmpty())
                 throw new IllegalArgumentException("merchantId is required.");
             if (secretKey == null || secretKey.isEmpty())
@@ -142,7 +142,7 @@ public final class WayaPayOptions {
                 throw new IllegalArgumentException("timeout must be positive.");
             if (maxRetries < 0)
                 throw new IllegalArgumentException("maxRetries must be >= 0.");
-            return new WayaPayOptions(this);
+            return new WayaQuickOptions(this);
         }
     }
 }

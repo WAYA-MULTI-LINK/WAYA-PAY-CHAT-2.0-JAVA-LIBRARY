@@ -1,4 +1,4 @@
-package com.waya.wayapay.model;
+package com.waya.wayaquick.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  * @param <T> the typed payload carried in {@link #data()}
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record WayaPayResponse<T>(
+public record WayaQuickResponse<T>(
         boolean success,
         /** Bank-style response code. "00" means success. */
         String code,

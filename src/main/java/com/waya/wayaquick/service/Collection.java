@@ -1,10 +1,10 @@
-package com.waya.wayapay.service;
+package com.waya.wayaquick.service;
 
-import com.waya.wayapay.WayaPayClient;
-import com.waya.wayapay.WayaPayException;
-import com.waya.wayapay.model.CollectionRequest;
-import com.waya.wayapay.model.CollectionResponse;
-import com.waya.wayapay.model.CollectionStatusResponse;
+import com.waya.wayaquick.WayaQuickClient;
+import com.waya.wayaquick.WayaQuickException;
+import com.waya.wayaquick.model.CollectionRequest;
+import com.waya.wayaquick.model.CollectionResponse;
+import com.waya.wayaquick.model.CollectionStatusResponse;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -12,16 +12,16 @@ import java.nio.charset.StandardCharsets;
 /** Payment collection (deposit) endpoints. */
 public final class Collection {
 
-    private final WayaPayClient client;
+    private final WayaQuickClient client;
 
-    public Collection(WayaPayClient client) {
+    public Collection(WayaQuickClient client) {
         this.client = client;
     }
 
     /**
      * {@code POST /payment-collect/initiate}. Returns a checkout URL to redirect the customer to.
      *
-     * @throws WayaPayException on an API error
+     * @throws WayaQuickException on an API error
      */
     public CollectionResponse initiate(CollectionRequest input) {
         if (input == null)
@@ -30,7 +30,7 @@ public final class Collection {
         CollectionResponse data = client.request(
                 "POST", "/payment-collect/initiate", input, null, client.type(CollectionResponse.class));
         if (data == null)
-            throw new WayaPayException("Empty response data from /payment-collect/initiate");
+            throw new WayaQuickException("Empty response data from /payment-collect/initiate");
         return data;
     }
 
@@ -40,7 +40,7 @@ public final class Collection {
      * webhook — the webhook is the primary signal; this is the pull/safety-net path.
      *
      * @throws IllegalArgumentException if {@code refNo} is blank
-     * @throws WayaPayException         on an API error
+     * @throws WayaQuickException         on an API error
      */
     public CollectionStatusResponse getStatus(String refNo) {
         if (refNo == null || refNo.isBlank())
@@ -50,7 +50,7 @@ public final class Collection {
         CollectionStatusResponse data = client.request(
                 "GET", path, null, null, client.type(CollectionStatusResponse.class));
         if (data == null)
-            throw new WayaPayException("Empty response data from " + path);
+            throw new WayaQuickException("Empty response data from " + path);
         return data;
     }
 }
