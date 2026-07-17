@@ -7,7 +7,7 @@ Targets **Java 17+**. One runtime dependency (Jackson for JSON); the HTTP layer 
 ## Install
 
 The library isn't on Maven Central yet. A pre-built JAR ships with the repo under
-[`artifact/version2.0.0/`](artifact/README.md), bundled as a single **zip** for easy download. You
+[`artifact/version2.0.1/`](artifact/README.md), bundled as a single **zip** for easy download. You
 install it from GitHub in three steps: **download the zip**, **unzip it**, then **register it with Maven**.
 
 ### Step 1 — Download the zip from GitHub
@@ -15,19 +15,19 @@ install it from GitHub in three steps: **download the zip**, **unzip it**, then 
 Open the zip on GitHub and click **Download raw file**, or `curl` the raw URL:
 
 ```bash
-curl -L -O https://github.com/WAYA-MULTI-LINK/WAYA-PAY-CHAT-2.0-JAVA-LIBRARY/raw/main/artifact/version2.0.0/wayaquick-integration-2.0.0.zip
+curl -L -O https://github.com/WAYA-MULTI-LINK/WAYA-PAY-CHAT-2.0-JAVA-LIBRARY/raw/main/artifact/version2.0.1/wayaquick-integration-2.0.1.zip
 ```
 
 The zip contains the library JAR, the sources JAR, and the POM.
 
 > Tip: cloning the repo (`git clone …`) gives you the same files under
-> `artifact/version2.0.0/` — skip the download and `cd` into that folder instead.
+> `artifact/version2.0.1/` — skip the download and `cd` into that folder instead.
 
 ### Step 2 — Unzip it
 
 ```bash
-unzip wayaquick-integration-2.0.0.zip
-# -> wayaquick-integration-2.0.0.jar, wayaquick-integration-2.0.0-sources.jar, wayaquick-integration-2.0.0.pom
+unzip wayaquick-integration-2.0.1.zip
+# -> wayaquick-integration-2.0.1.jar, wayaquick-integration-2.0.1-sources.jar, wayaquick-integration-2.0.1.pom
 ```
 
 ### Step 3 — Install it into your local Maven repo
@@ -36,12 +36,12 @@ From the folder where you unzipped the files, run:
 
 ```bash
 mvn install:install-file \
-  -Dfile=wayaquick-integration-2.0.0.jar \
-  -DpomFile=wayaquick-integration-2.0.0.pom \
-  -Dsources=wayaquick-integration-2.0.0-sources.jar
+  -Dfile=wayaquick-integration-2.0.1.jar \
+  -DpomFile=wayaquick-integration-2.0.1.pom \
+  -Dsources=wayaquick-integration-2.0.1-sources.jar
 ```
 
-This places the SDK in `~/.m2/repository/com/waya/wayaquick-integration/2.0.0/`. The `-DpomFile` flag is
+This places the SDK in `~/.m2/repository/io/github/waya-multi-link/wayaquick-integration/2.0.1/`. The `-DpomFile` flag is
 what makes Jackson resolve transitively — without it you'd have to add Jackson by hand.
 
 ### Step 4 — Declare the dependency
@@ -53,7 +53,7 @@ In your project's `pom.xml`:
     <dependency>
         <groupId>io.github.waya-multi-link</groupId>
         <artifactId>wayaquick-integration</artifactId>
-        <version>2.0.0</version>
+        <version>2.0.1</version>
     </dependency>
 </dependencies>
 ```
@@ -74,7 +74,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.waya:wayaquick-integration:2.0.0'
+    implementation 'io.github.waya-multi-link:wayaquick-integration:2.0.1'
 }
 
 java {
@@ -90,7 +90,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.waya:wayaquick-integration:2.0.0")
+    implementation("io.github.waya-multi-link:wayaquick-integration:2.0.1")
 }
 
 java {
@@ -98,7 +98,7 @@ java {
 }
 ```
 
-Prefer not to install into `~/.m2`? Drop the downloaded `wayaquick-integration-2.0.0.jar` into a `libs/`
+Prefer not to install into `~/.m2`? Drop the downloaded `wayaquick-integration-2.0.1.jar` into a `libs/`
 folder and use a flat-dir repository instead (you must then add Jackson yourself):
 
 ```groovy
@@ -108,7 +108,7 @@ repositories {
 }
 
 dependencies {
-    implementation name: 'wayaquick-integration-2.0.0'
+    implementation name: 'wayaquick-integration-2.0.1'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.1'
 }
 ```
@@ -118,7 +118,7 @@ dependencies {
 ```bash
 git clone https://github.com/WAYA-MULTI-LINK/WAYA-PAY-CHAT-2.0-JAVA-LIBRARY.git
 cd WAYA-PAY-CHAT-2.0-JAVA-LIBRARY
-mvn clean install   # builds, tests, and installs to ~/.m2 — artifact: target/wayaquick-integration-2.0.0.jar
+mvn clean install   # builds, tests, and installs to ~/.m2 — artifact: target/wayaquick-integration-2.0.1.jar
 ```
 
 Not using Maven? See [`artifact/README.md`](artifact/README.md) for Maven `system`-scope, Gradle

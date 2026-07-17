@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 This project follows [Semantic Versioning](https://semver.org).
 
+## [2.0.1] - 2026-07-17
+
+First version published to [Maven Central](https://central.sonatype.com/artifact/io.github.waya-multi-link/wayaquick-integration) via the automated release pipeline. No functional changes.
+
+### Changed
+
+- Maven coordinates are now `io.github.waya-multi-link:wayaquick-integration` (groupId moved off `com.waya` to the verified Central namespace; artifactId renamed from `wayapay-java-sdk`)
+- Renamed WayaPay → WayaQuick throughout: Java package `com.waya.wayapay` → `com.waya.wayaquick` and classes `WayaPayClient` → `WayaQuickClient`, `WayaPayException` → `WayaQuickException`, `WayaPayOptions` → `WayaQuickOptions`, `WayaPayWebhook` → `WayaQuickWebhook`, `WayaPayWebhookException` → `WayaQuickWebhookException`, `WayaPayResponse` → `WayaQuickResponse`
+- Release workflow now GPG-signs and publishes to Maven Central on every `v*.*.*` tag, in addition to creating the GitHub Release
+
 ## [2.0.0] - 2026-06-10
 
 First functional release of the Java SDK, aligned with the WayaQuick Merchant API v2 and feature-matched to the WayaQuick .NET SDK 2.0. Supersedes the empty `1.0.0` scaffold.
