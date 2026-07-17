@@ -67,6 +67,46 @@ WAYA_MERCHANT_ID=MER_... WAYA_SECRET_KEY=WAYASECK_TEST_... \
 
 This project follows [Semantic Versioning](https://semver.org). Releases are cut by pushing a `v*.*.*` tag.
 
+## Releasing & publishing to Maven Central
+
+The library is published as [`io.github.waya-multi-link:wayaquick-integration`](https://central.sonatype.com/artifact/io.github.waya-multi-link/wayaquick-integration) on Maven Central. Publishing is automated: pushing a version tag runs `.github/workflows/release.yml`, which builds, tests, GPG-signs, uploads to the Sonatype Central Portal (auto-publishes after validation), and creates a GitHub Release with the jars attached.
+
+### Cutting a release
+
+1. Bump `<version>` in `pom.xml` and add an entry to `CHANGELOG.md`.
+2. Restage the committed artifact bundle (see `artifact/README.md` for the recipe).
+3. Commit everything, then tag and push:
+
+   ```bash
+   git tag v<x.y.z>
+   git push origin main v<x.y.z>
+   ```
+
+4. Watch the **Release** workflow under the repo's Actions tab, and the deployment status under **Publish → Deployments** on [central.sonatype.com](https://central.sonatype.com). The artifact appears on Maven Central within ~30 minutes; [mvnrepository.com](https://mvnrepository.com) indexes it within a day.
+
+> **Caution — versions on Central are immutable.** A version can never be re-published, changed, or deleted. If a version was already published (for example from a local `./mvnw clean deploy -Prelease`), do **not** tag that same version — the CI deploy would fail validation. Always start from the next version bump, and make sure the build is final before releasing.
+
+### CI credentials
+
+The workflow needs four repository secrets (Settings → Secrets and variables → Actions):
+
+| Secret | Value |
+|--------|-------|
+| `CENTRAL_USERNAME` | Central Portal token username (Generate User Token on central.sonatype.com) |
+| `CENTRAL_PASSWORD` | Central Portal token password |
+| `GPG_PRIVATE_KEY` | Armored signing key: `gpg --armor --export-secret-keys <KEY_ID>` |
+| `GPG_PASSPHRASE` | Passphrase of that key |
+
+### Publishing manually (fallback)
+
+With a Central Portal token in `~/.m2/settings.xml` (`<server><id>central</id>...`), a GPG key whose public half is on `keyserver.ubuntu.com`, and `export GPG_TTY=$(tty)` set:
+
+```bash
+./mvnw clean deploy -Prelease
+```
+
+Prefer the tag-driven CI release — manual publishes skip review and make it easy to burn a version number.
+
 ## Code style
 
 - `record` for all model types

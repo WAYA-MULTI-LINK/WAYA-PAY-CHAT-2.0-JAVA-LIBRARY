@@ -5,7 +5,7 @@
                              http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.waya</groupId>
+	<groupId>io.github.waya-multi-link</groupId>
 	<artifactId>wayaquick-integration</artifactId>
 	<version>2.0.0</version>
 	<packaging>jar</packaging>
@@ -86,6 +86,58 @@
 				<artifactId>exec-maven-plugin</artifactId>
 				<version>3.1.0</version>
 			</plugin>
+
+			<!-- Javadoc jar (required by Maven Central) -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.6.3</version>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals><goal>jar</goal></goals>
+					</execution>
+				</executions>
+				<configuration>
+					<doclint>none</doclint>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<!-- Activate with -Prelease for `mvn deploy`; keeps local builds free of GPG prompts -->
+		<profile>
+			<id>release</id>
+			<build>
+				<plugins>
+					<!-- GPG signing (required by Maven Central) -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>3.2.4</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals><goal>sign</goal></goals>
+							</execution>
+						</executions>
+					</plugin>
+
+					<!-- Uploads the bundle to the Sonatype Central Portal on `mvn deploy` -->
+					<plugin>
+						<groupId>org.sonatype.central</groupId>
+						<artifactId>central-publishing-maven-plugin</artifactId>
+						<version>0.7.0</version>
+						<extensions>true</extensions>
+						<configuration>
+							<publishingServerId>central</publishingServerId>
+							<autoPublish>true</autoPublish>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>

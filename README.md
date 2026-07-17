@@ -51,7 +51,7 @@ In your project's `pom.xml`:
 ```xml
 <dependencies>
     <dependency>
-        <groupId>com.waya</groupId>
+        <groupId>io.github.waya-multi-link</groupId>
         <artifactId>wayaquick-integration</artifactId>
         <version>2.0.0</version>
     </dependency>

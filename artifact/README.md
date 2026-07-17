@@ -45,7 +45,7 @@ Now depend on it like any other library — Jackson is pulled in transitively fr
 
 ```xml
 <dependency>
-    <groupId>com.waya</groupId>
+    <groupId>io.github.waya-multi-link</groupId>
     <artifactId>wayaquick-integration</artifactId>
     <version>2.0.0</version>
 </dependency>
@@ -57,7 +57,7 @@ Point Maven straight at the JAR file. Note: with `system` scope you must also ad
 
 ```xml
 <dependency>
-    <groupId>com.waya</groupId>
+    <groupId>io.github.waya-multi-link</groupId>
     <artifactId>wayaquick-integration</artifactId>
     <version>2.0.0</version>
     <scope>system</scope>

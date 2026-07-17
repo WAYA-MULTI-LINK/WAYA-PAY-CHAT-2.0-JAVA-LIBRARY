@@ -21,9 +21,21 @@ jobs:
           distribution: temurin
           java-version: '17'
           cache: maven
+          # Writes ~/.m2/settings.xml with the Central Portal credentials
+          # (server id must match <publishingServerId> in pom.xml) and
+          # imports the GPG key used to sign the artifacts.
+          server-id: central
+          server-username: CENTRAL_USERNAME
+          server-password: CENTRAL_PASSWORD
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg-passphrase: GPG_PASSPHRASE
 
-      - name: Build, test & package
-        run: mvn -B clean package
+      - name: Build, test & publish to Maven Central
+        run: mvn -B clean deploy -Prelease
+        env:
+          CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
+          CENTRAL_PASSWORD: ${{ secrets.CENTRAL_PASSWORD }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
       - name: Stage release assets
         run: |
