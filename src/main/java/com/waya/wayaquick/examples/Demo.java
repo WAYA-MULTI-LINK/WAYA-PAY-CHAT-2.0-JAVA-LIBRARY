@@ -1,9 +1,15 @@
 package com.waya.wayaquick.examples;
 
+import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+
 import com.waya.wayaquick.WayaQuickClient;
 import com.waya.wayaquick.WayaQuickWebhook;
 import com.waya.wayaquick.WayaQuickWebhookException;
-import com.waya.wayaquick.model.Bank;
 import com.waya.wayaquick.model.BvnResponse;
 import com.waya.wayaquick.model.CollectionRequest;
 import com.waya.wayaquick.model.CollectionResponse;
@@ -15,12 +21,6 @@ import com.waya.wayaquick.model.PayoutStatusResponse;
 import com.waya.wayaquick.model.VerifyAccountRequest;
 import com.waya.wayaquick.model.VerifyAccountResponse;
 import com.waya.wayaquick.model.WebhookEvent;
-
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 
 /**
  * Runnable end-to-end demo. Run with:
