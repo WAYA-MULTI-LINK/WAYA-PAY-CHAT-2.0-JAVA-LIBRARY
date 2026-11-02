@@ -18,6 +18,8 @@ public record CollectionResponse(
         /** Redirect the customer here to complete payment. */
         String checkOutUrl,
         /** Merchant's unique identifier. */
-        String merchantId
+        String merchantId,
+        /** ISO 8601 expiration timestamp. */
+        String expiresAt
 ) {
 }
