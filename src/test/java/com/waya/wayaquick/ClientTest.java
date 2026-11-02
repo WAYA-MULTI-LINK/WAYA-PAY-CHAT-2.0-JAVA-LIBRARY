@@ -2,7 +2,11 @@ package com.waya.wayaquick;
 
 import com.sun.net.httpserver.HttpServer;
 import com.waya.wayaquick.model.Bank;
+import com.waya.wayaquick.model.BvnCompleteRequest;
+import com.waya.wayaquick.model.BvnInitiateRequest;
+import com.waya.wayaquick.model.BvnInitiateResponse;
 import com.waya.wayaquick.model.BvnRequest;
+import com.waya.wayaquick.model.BvnResponse;
 import com.waya.wayaquick.model.VerifyAccountRequest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -113,6 +117,65 @@ class ClientTest {
         List<Bank> banks = clientWith(2).payouts().listBanks();
         assertTrue(banks.isEmpty());
         assertEquals(2, calls.get(), "should have retried once after the 500");
+    }
+
+    @Test
+    void bvnInitiateValidatedLocallyBeforeNetwork() {
+        WayaQuickClient client = clientWith(0);
+        assertThrows(IllegalArgumentException.class, () -> client.identity().initiateBvn("123"));
+        assertThrows(IllegalArgumentException.class, () -> client.identity().initiateBvn(new BvnInitiateRequest("2250080903A")));
+        assertEquals(0, hits.get());
+    }
+
+    @Test
+    void bvnInitiatePostsToCorrectPathAndParsesResponse() {
+        respond("/identity-verification/bvn/initiate", 200, """
+                {
+                  "success": true,
+                  "code": "00",
+                  "message": "OTP sent",
+                  "data": {
+                    "reference": "ref-12345",
+                    "phoneNumber": "234****0000",
+                    "expiresAt": "2026-10-13T14:32:10.482"
+                  }
+                }""");
+
+        BvnInitiateResponse res = clientWith(0).identity().initiateBvn("22222222222");
+        assertEquals("ref-12345", res.reference());
+        assertEquals("234****0000", res.phoneNumber());
+        assertTrue(lastBody.get().contains("\"bvn\":\"22222222222\""));
+    }
+
+    @Test
+    void bvnCompleteRequiresReferenceAndOtp() {
+        WayaQuickClient client = clientWith(0);
+        assertThrows(IllegalArgumentException.class, () -> client.identity().completeBvn("", "123456"));
+        assertThrows(IllegalArgumentException.class, () -> client.identity().completeBvn("ref", ""));
+        assertEquals(0, hits.get());
+    }
+
+    @Test
+    void bvnCompletePostsToCorrectPathAndParsesKycRecord() {
+        respond("/identity-verification/bvn/complete", 200, """
+                {
+                  "success": true,
+                  "code": "00",
+                  "message": "completed",
+                  "data": {
+                    "bvn": "22222222222",
+                    "firstName": "Test",
+                    "lastName": "User",
+                    "watchListed": "SANDBOX"
+                  }
+                }""");
+
+        BvnResponse res = clientWith(0).identity().completeBvn("ref-12345", "123456");
+        assertEquals("22222222222", res.bvn());
+        assertEquals("Test", res.firstName());
+        assertEquals("SANDBOX", res.watchListed());
+        assertTrue(lastBody.get().contains("\"reference\":\"ref-12345\""));
+        assertTrue(lastBody.get().contains("\"otp\":\"123456\""));
     }
 
     @Test

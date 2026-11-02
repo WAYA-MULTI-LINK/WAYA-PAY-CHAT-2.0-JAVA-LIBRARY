@@ -156,7 +156,8 @@ The client is thread-safe — build one and share it.
 | `client.payouts().getStatus(reference)` | `PayoutStatusResponse` |
 | `client.collection().initiate(…)` | `CollectionResponse` |
 | `client.collection().getStatus(refNo)` | `CollectionStatusResponse` |
-| `client.identity().verifyBvn(…)` | `BvnResponse` |
+| `client.identity().initiateBvn(…)` | `BvnInitiateResponse` |
+| `client.identity().completeBvn(…)` | `BvnResponse` |
 | `client.webhooks().constructEvent(…)` | `WebhookEvent` |
 | `client.webhooks().verifySignature(…)` | `boolean` |
 | `WayaQuickClient.generateReference(prefix)` | `String` |
@@ -332,8 +333,15 @@ WebhookEvent evt = client.webhooks().constructEvent(rawBody, timestamp, signatur
 
 ## BVN identity check
 
+Verification takes two steps: submitting the BVN sends an OTP to the phone number registered against it, and the holder's record is returned once that OTP is verified.
+
 ```java
-BvnResponse identity = client.identity().verifyBvn("22500809037"); // exactly 11 digits — validated locally
+// Step 1: Initiate verification (sends OTP)
+BvnInitiateResponse started = client.identity().initiateBvn("22222222222"); // exactly 11 digits — validated locally
+System.out.println("OTP sent to " + started.phoneNumber() + ", session: " + started.reference());
+
+// Step 2: Complete verification with OTP
+BvnResponse identity = client.identity().completeBvn(started.reference(), "123456");
 System.out.println(identity.firstName() + " " + identity.lastName());
 ```
 
