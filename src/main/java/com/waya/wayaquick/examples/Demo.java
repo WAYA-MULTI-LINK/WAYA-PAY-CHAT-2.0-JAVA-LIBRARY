@@ -10,7 +10,6 @@ import javax.crypto.spec.SecretKeySpec;
 import com.waya.wayaquick.WayaQuickClient;
 import com.waya.wayaquick.WayaQuickWebhook;
 import com.waya.wayaquick.WayaQuickWebhookException;
-import com.waya.wayaquick.model.BvnResponse;
 import com.waya.wayaquick.model.CollectionRequest;
 import com.waya.wayaquick.model.CollectionResponse;
 import com.waya.wayaquick.model.CollectionStatus;
@@ -24,6 +23,7 @@ import com.waya.wayaquick.model.WebhookEvent;
 
 /**
  * Runnable end-to-end demo. Run with:
+ * 
  * <pre>
  *   WAYA_MERCHANT_ID=MER_... WAYA_SECRET_KEY=WAYASECK_TEST_... \
  *     mvn -q exec:java -Dexec.mainClass=com.waya.wayaquick.examples.Demo
@@ -96,13 +96,13 @@ public final class Demo {
             if (deposit.parsedStatus() == CollectionStatus.SUCCESSFUL)
                 System.out.println("Funds confirmed — fulfil using refNo " + deposit.refNo());
 
-            // 8. Verify a webhook (offline demo). In production WayaQuick POSTs this to your HTTPS endpoint;
-            //    here we sign a sample body locally to show the verification flow end to end.
+            // 8. Verify a webhook (offline demo). In production WayaQuick POSTs this to
+            // your HTTPS endpoint;
+            // here we sign a sample body locally to show the verification flow end to end.
             final String webhookSecret = "WAYASECK_TEST_demo_webhook_secret";
-            final String rawBody =
-                    "{\"OrderId\":\"1779662251460508970\",\"Amount\":1500.00,\"Fee\":15.00,\"Currency\":\"NGN\","
-                            + "\"Status\":\"SUCCESSFUL\",\"productName\":\"CARD\",\"customer\":{\"email\":\"john@example.com\"},"
-                            + "\"merchantId\":\"MER_xyz\",\"recurrentPayment\":false}";
+            final String rawBody = "{\"OrderId\":\"1779662251460508970\",\"Amount\":1500.00,\"Fee\":15.00,\"Currency\":\"NGN\","
+                    + "\"Status\":\"SUCCESSFUL\",\"productName\":\"CARD\",\"customer\":{\"email\":\"john@example.com\"},"
+                    + "\"merchantId\":\"MER_xyz\",\"recurrentPayment\":false}";
             String timestamp = String.valueOf(System.currentTimeMillis());
             String signature = hmacBase64(webhookSecret, timestamp + "." + rawBody);
 
