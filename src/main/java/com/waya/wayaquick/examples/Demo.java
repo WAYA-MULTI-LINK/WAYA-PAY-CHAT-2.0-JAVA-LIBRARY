@@ -51,10 +51,10 @@ public final class Demo {
             System.out.printf("Resolved: %s @ %s (%s)%n",
                     verified.accountName(), verified.bankName(), verified.responseCode());
 
-            // 3. BVN identity check
-            BvnResponse identity = client.identity().verifyBvn("22500809037");
-            System.out.printf("BVN holder: %s %s | watch-listed: %s%n",
-                    identity.firstName(), identity.lastName(), identity.watchListed());
+            // 3. BVN identity check (Initiate OTP flow)
+            var bvnSession = client.identity().initiateBvn("22500809037");
+            System.out.printf("BVN OTP sent to: %s (session: %s)%n",
+                    bvnSession.phoneNumber(), bvnSession.reference());
 
             // 4. Initiate a payout — always verify the account first (step 2)
             PayoutResponse payout = client.payouts().initiate(PayoutRequest.builder()
