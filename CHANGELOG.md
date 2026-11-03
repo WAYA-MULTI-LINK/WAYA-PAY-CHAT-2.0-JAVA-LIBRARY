@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 This project follows [Semantic Versioning](https://semver.org).
 
+## [2.0.4] - 2026-11-03
+
+### Added
+- Added two-step BVN verification: `client.identity().initiateBvn()` (`POST /identity-verification/bvn/initiate`) and `client.identity().completeBvn()` (`POST /identity-verification/bvn/complete`) with OTP verification.
+- Added `expiresAt` field to `CollectionResponse` record.
+
+### Deprecated
+- `client.identity().verifyBvn()` is now deprecated in favor of `initiateBvn()` and `completeBvn()`.
+
 ## [2.0.1] - 2026-07-17
 
 First version published to [Maven Central](https://central.sonatype.com/artifact/io.github.waya-multi-link/wayaquick-integration) via the automated release pipeline. No functional changes.
